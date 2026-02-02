@@ -1,0 +1,23 @@
+{
+  "name": "ruta-segura-peru",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:mobile": "npm run start --workspace=apps/mobile",
+    "dev:agency": "npm run dev --workspace=apps/agency-web",
+    "dev:super-admin": "npm run dev --workspace=super-admin-dashboard",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "backend:dev": "cd backend && python -m uvicorn app.main:app --reload",
+    "backend:start": "cd backend && python -m uvicorn app.main:app --host 0.0.0.0",
+    "test:backend": "cd backend && python -m pytest tests/ -v"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"app\\\\page.tsx -> @/components/dashboard/live-map\":{\"id\":\"app\\\\page.tsx -> @/components/dashboard/live-map\",\"files\":[\"static/css/_app-pages-browser_src_components_dashboard_live-map_tsx.css\",\"static/chunks/_app-pages-browser_src_components_dashboard_live-map_tsx.js\"]}}"

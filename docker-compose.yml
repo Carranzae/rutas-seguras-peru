@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  # ============================================
+  # PostgreSQL with PostGIS Extension
+  # ============================================
+  db:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: ruta_segura_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: ruta_segura_peru
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ruta_segura_net
+
+  # ============================================
+  # Redis for Caching & Rate Limiting
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: ruta_segura_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ruta_segura_net
+
+  # ============================================
+  # FastAPI Backend
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ruta_segura_backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:123@db:5432/ruta_segura_peru
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./backend:/app
+      - ./backend/logs:/app/logs
+    networks:
+      - ruta_segura_net
+    restart: unless-stopped
+
+  # ============================================
+  # Super Admin Dashboard (Next.js)
+  # ============================================
+  admin:
+    build:
+      context: ./super-admin-dashboard
+      dockerfile: Dockerfile
+    container_name: ruta_segura_admin
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - ruta_segura_net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  ruta_segura_net:
+    driver: bridge
