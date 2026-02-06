@@ -1,37 +1,39 @@
 // Ruta Segura Perú - Group Monitoring Screen
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { bookingsService } from '@/src/services/bookings';
+import { httpClient } from '@/src/core/api';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+interface Tourist {
+    id: string;
+    name: string;
+    status: 'ok' | 'warning' | 'alert';
+    distance: string;
+    battery: number;
+    lastSeen: string;
+}
+
 export default function GroupMonitoring() {
     const { tour_id } = useLocalSearchParams();
-    const [tourists, setTourists] = React.useState<any[]>([]);
+    const [tourists, setTourists] = React.useState<Tourist[]>([]);
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         loadGroup();
-
-        // Subscribe to live updates
-        // We assume tracking service is already running globally or we start it
-        // Ideally we register a callback listener, strict implementation depends on architecture
-        // For now, we simulate "connecting" to the existing service loop
     }, []);
 
     const loadGroup = async () => {
         try {
-            // Get bookings for this tour to build roster
             const tourId = Array.isArray(tour_id) ? tour_id[0] : tour_id || 'current';
-            const response = await bookingsService.getTourBookings(tourId); // We assume guide has access
+            const response = await httpClient.get<{ items: any[] }>(`/tours/${tourId}/bookings`);
 
-            if (response && response.items) {
-                // Initial map
-                const roster = response.items.map(b => ({
-                    id: b.user_id, // Map booking user to tourist
-                    name: b.user_name || b.contact_name,
-                    status: 'ok',
+            if (response.data?.items) {
+                const roster: Tourist[] = response.data.items.map((b: any) => ({
+                    id: b.user_id,
+                    name: b.user_name || b.contact_name || 'Unknown',
+                    status: 'ok' as const,
                     distance: 'Unknown',
                     battery: 0,
                     lastSeen: 'Offline'
@@ -40,7 +42,6 @@ export default function GroupMonitoring() {
             }
         } catch (error) {
             console.error('Error loading group:', error);
-            // Fallback empty
         } finally {
             setLoading(false);
         }

@@ -6,7 +6,7 @@ import { SOSButton } from '@/src/components/common';
 import { FeaturedTourSkeleton, Skeleton, TourCardSkeleton } from '@/src/components/common/Skeleton';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
 import { useLanguage } from '@/src/i18n';
-import { toursService } from '@/src/services/tours';
+import { toursService, type TourItem } from '@/src/services/tours';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -123,9 +123,9 @@ export default function ExploreScreen() {
                 search: searchQuery || undefined,
             });
 
-            if (response && response.items) {
+            if (response && Array.isArray(response)) {
                 // Map service tours to UI tours
-                const mappedTours: TourUI[] = response.items.map(tour => ({
+                const mappedTours: TourUI[] = response.map((tour: TourItem) => ({
                     id: tour.id,
                     name: tour.name,
                     description: tour.description || '',

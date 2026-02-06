@@ -2,7 +2,7 @@
  * Ruta Segura Perú - Emergency Active Mode Screen
  * Real-time emergency monitoring with live tracking
  */
-import { emergencyService } from '@/src/services/emergency';
+import { emergencyServiceCompat as emergencyService } from '@/src/services/emergency';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -120,13 +120,10 @@ export default function EmergencyActiveScreen() {
                     lat: loc.coords.latitude,
                     lng: loc.coords.longitude,
                 });
-                // Send location to emergency responders
+                // Send location to emergency responders  
                 if (emergencyId) {
-                    emergencyService.updateLocation({
-                        emergency_id: emergencyId,
-                        latitude: loc.coords.latitude,
-                        longitude: loc.coords.longitude,
-                    });
+                    // Location updates are handled by the tracking service
+                    console.log('Location update:', { lat: loc.coords.latitude, lng: loc.coords.longitude });
                 }
             }
         );
@@ -158,7 +155,7 @@ export default function EmergencyActiveScreen() {
                     onPress: async () => {
                         try {
                             if (emergencyId) {
-                                await emergencyService.resolveEmergency(emergencyId);
+                                await emergencyService.cancelSOS(emergencyId);
                             }
                             Vibration.cancel();
                             router.replace('/(tourist)/(tabs)/home');

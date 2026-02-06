@@ -5,8 +5,6 @@
 import { SOSButton } from '@/src/components/common';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
 import { useLanguage } from '@/src/i18n';
-import { emergencyService } from '@/src/services/emergency';
-import { liveTrackingService } from '@/src/services/liveTracking';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -20,6 +18,8 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { emergencyServiceCompat as emergencyService } from '../../../src/services/emergency';
+import { liveTrackingService } from '../../../src/services/liveTracking';
 
 interface EmergencyContact {
     name: string;

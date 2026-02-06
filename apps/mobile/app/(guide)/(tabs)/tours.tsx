@@ -1,33 +1,39 @@
 // Ruta Segura Perú - Guide Tours Screen
 import { BorderRadius, Colors, Shadows, Spacing, Typography } from '@/src/constants/theme';
-import { toursService } from '@/src/services/tours';
-import { router, useFocusEffect } from 'expo-router';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toursService, type TourItem } from '../../../src/services/tours';
+
+interface TourDisplay {
+    id: string;
+    title: string;
+    date: string;
+    guests: number;
+    status: string;
+}
 
 export default function GuideTours() {
-    const [tours, setTours] = React.useState<any[]>([]);
+    const [tours, setTours] = React.useState<TourDisplay[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [stats, setStats] = React.useState({ weeklyTours: 0, totalGuests: 0, rating: 4.9 });
 
-    useFocusEffect(
-        React.useCallback(() => {
-            loadAssignedTours();
-        }, [])
-    );
+    useEffect(() => {
+        loadAssignedTours();
+    }, []);
 
-    const loadAssignedTours = async () => {
+    const loadAssignedTours = useCallback(async () => {
         try {
             // Use local service extension
             const response = await toursService.getAssignedTours();
             if (response && response.items) {
-                const mappedTours = response.items.map(t => ({
+                const mappedTours: TourDisplay[] = response.items.map((t: TourItem) => ({
                     id: t.id,
                     title: t.name,
-                    date: new Date(t.created_at).toLocaleDateString(), // Use scheduled date if available
-                    guests: t.max_participants, // Or bookings count
-                    status: t.status === 'published' ? 'upcoming' : t.status
+                    date: t.created_at ? new Date(t.created_at).toLocaleDateString() : 'N/A',
+                    guests: t.max_participants || 0,
+                    status: t.status === 'published' ? 'upcoming' : (t.status || 'draft')
                 }));
                 setTours(mappedTours);
 
@@ -40,12 +46,10 @@ export default function GuideTours() {
             }
         } catch (error) {
             console.error('Error loading guide tours:', error);
-            // Fallback for safety if backend not ready, keep empty or show error
-            // setTours([]); 
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>

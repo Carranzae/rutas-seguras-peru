@@ -2,7 +2,6 @@
  * Ruta Segura Perú - Trust Circle Screen (Mi Círculo de Confianza)
  * Emergency contacts management with international phone validation
  */
-import { emergencyContactsService } from '@/src/services/emergencyContacts';
 import { Ionicons } from '@expo/vector-icons';
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
@@ -18,6 +17,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import type { TrustCircleContact } from '../../src/features/tourist/types';
+import { emergencyContactsService } from '../../src/services/emergencyContacts';
 
 interface EmergencyContact {
     id: string;
@@ -76,7 +77,20 @@ export default function TrustCircleScreen() {
         setLoading(true);
         try {
             const response = await emergencyContactsService.list();
-            setContacts(response.items);
+            // Map to ensure types match local EmergencyContact interface
+            const mappedContacts: EmergencyContact[] = response.items.map((item: TrustCircleContact) => ({
+                id: item.id,
+                name: item.name,
+                phone_e164: item.phone_e164 || item.phone,
+                phone_display: item.phone_display || item.phone,
+                email: item.email,
+                relationship: item.relationship,
+                notification_channel: item.notification_channel || 'sms',
+                is_primary: item.is_primary,
+                is_verified: item.is_verified || false,
+                priority: item.priority || 0
+            }));
+            setContacts(mappedContacts);
         } catch (error) {
             console.error('Error loading contacts:', error);
         } finally {

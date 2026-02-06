@@ -1,5 +1,4 @@
 /**
- * Ruta Segura Perú - Config Package
- * Export all configuration
+ * Compatibility re-exports for legacy imports
  */
-export { API_CONFIG, ENDPOINTS, getApiUrl } from './api';
+export * from './api';

@@ -2,7 +2,7 @@
  * Ruta Segura Perú - Guide Registration Flow
  * Complete multi-step registration with: Personal data, DNI, DIRCETUR, Biometric, Waiting
  */
-import { api } from '@/src/services/api';
+import { httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
@@ -34,6 +34,15 @@ interface GuideData {
     experience_years: string;
     specialties: string;
     password: string;
+}
+
+interface VerificationStatus {
+    status: string;
+    rejection_reason?: string;
+}
+
+interface VerificationResponse {
+    id: string;
 }
 
 export default function GuideRegistrationScreen() {
@@ -69,15 +78,15 @@ export default function GuideRegistrationScreen() {
 
         const pollInterval = setInterval(async () => {
             try {
-                const response = await api.get(`/verifications/${verificationId}/status`);
-                const status = response.data.status;
+                const response = await httpClient.get<VerificationStatus>(`/verifications/${verificationId}/status`);
+                const status = response.data?.status;
 
                 if (status === 'approved') {
                     clearInterval(pollInterval);
                     setStep('approved');
                 } else if (status === 'rejected') {
                     clearInterval(pollInterval);
-                    setRejectionReason(response.data.rejection_reason);
+                    setRejectionReason(response.data?.rejection_reason || null);
                     setStep('rejected');
                 }
             } catch (e) {
@@ -141,11 +150,8 @@ export default function GuideRegistrationScreen() {
         } as any);
         formData.append('type', type);
 
-        const response = await fetch(`${api.getAccessToken() ? await getApiUrl() : ''}/upload`, {
+        const response = await fetch(`${await getApiUrl()}/upload`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${api.getAccessToken()}`,
-            },
             body: formData,
         });
 
@@ -172,7 +178,7 @@ export default function GuideRegistrationScreen() {
 
         try {
             // 1. First register the user account
-            const registerResponse = await api.post('/auth/register', {
+            await httpClient.post('/auth/register', {
                 email: guideData.email,
                 password: guideData.password,
                 full_name: guideData.full_name,
@@ -192,7 +198,7 @@ export default function GuideRegistrationScreen() {
             const biometricHash = `hash_${Date.now()}_${guideData.dni_number}`;
             const deviceSignature = `device_${Date.now()}`;
 
-            const verificationResponse = await api.post('/verifications/biometric', {
+            const verificationResponse = await httpClient.post<VerificationResponse>('/verifications/biometric', {
                 verification_type: 'biometric_face',
                 biometric_hash: biometricHash,
                 device_signature: deviceSignature,
@@ -201,14 +207,14 @@ export default function GuideRegistrationScreen() {
             });
 
             // 4. Submit document verification
-            await api.post('/verifications/document', {
+            await httpClient.post('/verifications/document', {
                 verification_type: 'document_dni',
                 document_url: dniUrl,
                 document_score: 90,
             });
 
             // 5. Submit DIRCETUR license
-            await api.post('/verifications/document', {
+            await httpClient.post('/verifications/document', {
                 verification_type: 'dircetur_license',
                 document_url: certUrl,
                 license_number: guideData.dircetur_license,
@@ -216,12 +222,12 @@ export default function GuideRegistrationScreen() {
             });
 
             // Save verification ID for polling
-            setVerificationId(verificationResponse.data.id);
+            setVerificationId(verificationResponse.data?.id || null);
 
             // Store registration data locally
             await AsyncStorage.setItem('pending_guide_registration', JSON.stringify({
                 ...guideData,
-                verification_id: verificationResponse.data.id,
+                verification_id: verificationResponse.data?.id,
                 submitted_at: new Date().toISOString(),
             }));
 

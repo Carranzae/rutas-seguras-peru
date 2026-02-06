@@ -4,11 +4,10 @@
  */
 import { SOSButton } from '@/src/components/common';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { api } from '@/src/services/api';
-import { emergencyService } from '@/src/services/emergency';
-import { liveTrackingService } from '@/src/services/liveTracking';
-import { toursService } from '@/src/services/tours';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { httpClient } from '@/src/core/api';
+import { useAuth } from '@/src/features/auth';
+import { useEmergencyStore } from '@/src/features/emergency';
+import { liveTrackingService } from '@/src/features/tracking';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -31,16 +30,9 @@ interface GuideStats {
     earnings_this_month: number;
 }
 
-interface UserData {
-    id: string;
-    full_name: string;
-    email: string;
-    is_verified: boolean;
-    avatar_url?: string;
-}
-
 export default function GuideDashboard() {
-    const [user, setUser] = useState<UserData | null>(null);
+    const { user } = useAuth();
+    const { sendSOS } = useEmergencyStore();
     const [nextTour, setNextTour] = useState<Tour | null>(null);
     const [upcomingTours, setUpcomingTours] = useState<Tour[]>([]);
     const [stats, setStats] = useState<GuideStats | null>(null);
@@ -59,26 +51,18 @@ export default function GuideDashboard() {
     // Load user data and tours
     const loadData = useCallback(async () => {
         try {
-            // Get user from storage
-            const userDataStr = await AsyncStorage.getItem('user_data');
-            if (userDataStr) {
-                setUser(JSON.parse(userDataStr));
-            }
+            // Fetch guide's tours from backend
+            const toursResponse = await httpClient.get<{ items: any[] }>('/tours/assigned');
 
-            // Fetch guide's tours from backend using NEW endpoint
-            // Use toursService mapped response logic or direct API call
-            // We use toursService helper we created
-            const toursResponse = await toursService.getAssignedTours();
-
-            if (toursResponse && toursResponse.items) {
-                const tours = toursResponse.items;
+            if (toursResponse.data?.items) {
+                const tours = toursResponse.data.items;
 
                 // Map to UI model
                 const mappedTours: Tour[] = tours.map((t: any) => ({
                     id: t.id,
                     name: t.name,
-                    date: new Date(t.created_at).toLocaleDateString(), // Use scheduled date if available
-                    time: '09:00', // Mock time as backend Tour doesn't strictly have time field yet vs DateTime
+                    date: new Date(t.created_at).toLocaleDateString(),
+                    time: '09:00',
                     guests_count: t.max_participants,
                     meeting_point: t.meeting_point || 'Plaza de Armas',
                     status: t.status === 'published' ? 'scheduled' : t.status
@@ -96,13 +80,12 @@ export default function GuideDashboard() {
             }
 
             // Fetch guide stats
-            const statsResponse = await api.get('/guides/me/stats');
-            if (statsResponse.ok && statsResponse.data) {
+            const statsResponse = await httpClient.get<GuideStats>('/guides/me/stats');
+            if (statsResponse.data) {
                 setStats(statsResponse.data);
             }
         } catch (error) {
             console.log('Error loading guide data:', error);
-            // No mock fallback!
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -111,12 +94,9 @@ export default function GuideDashboard() {
 
     useEffect(() => {
         loadData();
-
-        // Start live tracking in background
         startTracking();
 
         return () => {
-            // Cleanup tracking on unmount
             liveTrackingService.stopTracking();
         };
     }, [loadData]);
@@ -138,20 +118,13 @@ export default function GuideDashboard() {
     // Handle SOS activation
     const handleSOS = async () => {
         try {
-            // Send SOS via live tracking service
-            await liveTrackingService.sendSOS('Emergencia activada por guía desde dashboard');
-
-            // Also call emergency service
-            const emergency = await emergencyService.triggerSOS({
-                description: 'Emergencia activada por guía',
-                severity: 'high',
-                tourId: nextTour?.id,
-            });
+            // Send SOS via store (handles both WebSocket and HTTP)
+            await sendSOS('Emergencia activada por guía desde dashboard');
 
             // Navigate to emergency screen
             router.push({
                 pathname: '/(guide)/active-route',
-                params: { sos: 'true', emergency_id: emergency?.id || '' },
+                params: { sos: 'true' },
             });
 
             Alert.alert(
@@ -176,7 +149,7 @@ export default function GuideDashboard() {
 
         try {
             // Update tour status in backend
-            await api.post(`/tours/${nextTour.id}/start`);
+            await httpClient.post(`/tours/${nextTour.id}/start`, {});
 
             // Start live tracking for this tour
             await liveTrackingService.startTracking({
@@ -193,7 +166,6 @@ export default function GuideDashboard() {
             });
         } catch (error) {
             console.log('Start tour error:', error);
-            // Still navigate for demo
             router.push('/(guide)/live-tracking');
         }
     };

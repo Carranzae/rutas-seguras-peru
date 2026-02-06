@@ -3,7 +3,7 @@
  * Shows current and past bookings with guide assignment status
  */
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { Booking, bookingsService } from '@/src/services/bookings';
+import { httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +18,17 @@ import {
     View
 } from 'react-native';
 
+interface Booking {
+    id: string;
+    tour_id: string;
+    tour_name: string;
+    date: string;
+    amount: number;
+    status: string;
+    guide_name?: string;
+    guide_status?: string;
+}
+
 export default function BookingsScreen() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
@@ -29,15 +40,12 @@ export default function BookingsScreen() {
 
     const loadBookings = async () => {
         try {
-            const response = await bookingsService.getMyBookings();
-            if (response && response.items) {
-                // Map backend response to UI format if needed, or stick to interface
-                // The backend returns snake_case, frontend interface matches it mostly
-                setBookings(response.items);
+            const response = await httpClient.get<{ items: Booking[] }>('/bookings/my');
+            if (response.data?.items) {
+                setBookings(response.data.items);
             }
         } catch (error) {
             console.error('Error loading bookings:', error);
-            // Optionally set empty state or error state here
             setBookings([]);
         } finally {
             setLoading(false);

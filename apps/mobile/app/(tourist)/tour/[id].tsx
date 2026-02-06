@@ -4,9 +4,8 @@
  */
 import { TourDetailSkeleton } from '@/src/components/common/Skeleton';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { useLanguage } from '@/src/i18n';
-import { api } from '@/src/services/api';
-import { toursService } from '@/src/services/tours';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +20,7 @@ import {
     View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toursService } from '../../../src/services/tours';
 
 interface TourDetail {
     id: string;
@@ -79,7 +79,7 @@ export default function TourDetailScreen() {
     const loadTourDetails = async () => {
         try {
             // Fetch tour details from backend
-            const tourData = await toursService.getTourById(id || '');
+            const tourData = await toursService.getById(id || '');
             if (tourData) {
                 // Map service data to local interface
                 const mappedTour: TourDetail = {
@@ -88,17 +88,17 @@ export default function TourDetailScreen() {
                     description: tourData.description || '',
                     price: tourData.price,
                     duration_hours: tourData.duration_hours || 0,
-                    rating: 4.5, // Default/Mock as it might be missing in service type
-                    reviews_count: 0,
-                    image_url: undefined, // Add if available in service response
-                    category: 'general',
-                    location: 'Peru',
+                    rating: tourData.rating || 4.5,
+                    reviews_count: tourData.reviews_count || 0,
+                    image_url: tourData.cover_image_url || tourData.gallery_urls?.[0] || undefined,
+                    category: tourData.difficulty_level || 'general',
+                    location: tourData.meeting_point || 'Peru',
                     meeting_point: tourData.meeting_point || '',
                     included: tourData.included_services || [],
                     not_included: [],
                     highlights: [],
                     agency: {
-                        id: tourData.agency_id,
+                        id: tourData.agency_id || '',
                         name: tourData.agency_name || 'Agency',
                     },
                     guide: tourData.guide_id ? {
@@ -112,9 +112,9 @@ export default function TourDetailScreen() {
             }
 
             // Fetch reviews
-            const reviewsData = await api.get(`/tours/${id}/reviews`);
-            if (reviewsData.ok) {
-                setReviews(reviewsData.data.items || []);
+            const reviewsData = await httpClient.get<{ items: Review[] }>(`/tours/${id}/reviews`);
+            if (reviewsData.data?.items) {
+                setReviews(reviewsData.data.items);
             }
         } catch (error) {
             console.error('Error loading tour:', error);
@@ -176,12 +176,12 @@ export default function TourDetailScreen() {
             params: {
                 tour_id: tour.id,
                 tour_name: tour.name,
-                price: tour.price,
+                price: String(tour.price),
                 guests: guests.toString(),
                 date: selectedDate || 'Jan 25, 2026',
                 time: selectedTime || '4:00 AM',
-                agency_id: tour.agency?.id,
-                agency_name: tour.agency?.name,
+                agency_id: tour.agency?.id || '',
+                agency_name: tour.agency?.name || '',
             },
         });
     };
@@ -193,7 +193,7 @@ export default function TourDetailScreen() {
         }
 
         try {
-            await api.post(`/tours/${id}/reviews`, {
+            await httpClient.post(`/tours/${id}/reviews`, {
                 rating: newReview.rating,
                 comment: newReview.comment,
             });

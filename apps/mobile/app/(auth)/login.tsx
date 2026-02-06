@@ -1,7 +1,7 @@
 // Ruta Segura Perú - Login Screen with i18n
 import { Colors, Spacing } from '@/src/constants/theme';
+import { useAuth } from '@/src/features/auth';
 import { useLanguage } from '@/src/i18n';
-import { authService } from '@/src/services';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -10,10 +10,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
     const { t, language } = useLanguage();
+    const { login, isLoading, error: authError, clearError } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const handleLogin = async () => {
@@ -26,43 +26,37 @@ export default function LoginScreen() {
             return;
         }
 
-        setLoading(true);
         setError('');
+        clearError();
 
         try {
-            const user = await authService.login({
+            const user = await login({
                 email: email.trim().toLowerCase(),
                 password: password,
             });
 
-            // Note: auth_token is already saved internally by authService.login()
+            // Save role for navigation
             await AsyncStorage.setItem('user_role', user.role);
-            await AsyncStorage.setItem('user_data', JSON.stringify(user));
 
             // Navigate based on role
             switch (user.role) {
+                case 'guide':
+                    router.replace('/(guide)/(tabs)/dashboard');
+                    break;
                 case 'super_admin':
                 case 'tourist':
                 default:
                     router.replace('/(tourist)/(tabs)/explore');
                     break;
-                case 'guide':
-                    router.replace('/(guide)/(tabs)/dashboard');
-                    break;
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Login error:', err);
-            if (err.response?.status === 401) {
-                setError(language === 'es' ? 'Correo o contraseña incorrectos' : 'Incorrect email or password');
-            } else if (err.response?.status === 404) {
-                setError(language === 'es' ? 'Usuario no encontrado' : 'User not found');
-            } else {
-                setError(err.response?.data?.detail || 'Login failed');
-            }
-        } finally {
-            setLoading(false);
+            const errorMessage = err instanceof Error ? err.message : 'Login failed';
+            setError(errorMessage);
         }
     };
+
+    const displayError = error || authError;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -79,9 +73,9 @@ export default function LoginScreen() {
                     </View>
 
                     <View style={styles.form}>
-                        {error ? (
+                        {displayError ? (
                             <View style={styles.errorContainer}>
-                                <Text style={styles.errorText}>⚠️ {error}</Text>
+                                <Text style={styles.errorText}>⚠️ {displayError}</Text>
                             </View>
                         ) : null}
 
@@ -95,7 +89,7 @@ export default function LoginScreen() {
                                 onChangeText={(text) => { setEmail(text); setError(''); }}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
-                                editable={!loading}
+                                editable={!isLoading}
                             />
                         </View>
 
@@ -109,7 +103,7 @@ export default function LoginScreen() {
                                     value={password}
                                     onChangeText={(text) => { setPassword(text); setError(''); }}
                                     secureTextEntry={!showPassword}
-                                    editable={!loading}
+                                    editable={!isLoading}
                                 />
                                 <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
                                     <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
@@ -122,11 +116,11 @@ export default function LoginScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+                            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
                             onPress={handleLogin}
-                            disabled={loading}
+                            disabled={isLoading}
                         >
-                            {loading ? (
+                            {isLoading ? (
                                 <ActivityIndicator color="white" />
                             ) : (
                                 <Text style={styles.loginButtonText}>{t.auth.loginButton}</Text>

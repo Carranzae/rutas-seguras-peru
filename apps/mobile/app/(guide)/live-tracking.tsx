@@ -3,7 +3,8 @@
  * Real-time GPS tracking with map visualization
  */
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { liveTrackingService } from '@/src/services';
+import { type ConnectionState } from '@/src/core/api';
+import { liveTrackingService, type LocationData, type SafetyAnalysis } from '@/src/features/tracking';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
@@ -22,7 +23,7 @@ interface TrackPoint {
 }
 
 export default function LiveTrackingScreen() {
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
     const [trackingActive, setTrackingActive] = useState(false);
     const [wsConnected, setWsConnected] = useState(false);
     const [speed, setSpeed] = useState(0);
@@ -53,8 +54,13 @@ export default function LiveTrackingScreen() {
                 return;
             }
             const currentLocation = await Location.getCurrentPositionAsync({});
-            setLocation(currentLocation);
-            updateMetrics(currentLocation);
+            setLocation({
+                latitude: currentLocation.coords.latitude,
+                longitude: currentLocation.coords.longitude,
+            });
+            setSpeed(currentLocation.coords.speed ? Math.round(currentLocation.coords.speed * 3.6 * 10) / 10 : 0);
+            setAltitude(Math.round(currentLocation.coords.altitude || 0));
+            setAccuracy(Math.round(currentLocation.coords.accuracy || 0));
 
             // Center map on current location
             setRegion({
@@ -67,10 +73,10 @@ export default function LiveTrackingScreen() {
         return () => stopTracking();
     }, []);
 
-    const updateMetrics = (loc: Location.LocationObject) => {
-        setSpeed(loc.coords.speed ? Math.round(loc.coords.speed * 3.6 * 10) / 10 : 0);
-        setAltitude(Math.round(loc.coords.altitude || 0));
-        setAccuracy(Math.round(loc.coords.accuracy || 0));
+    const updateMetrics = (loc: LocationData) => {
+        setSpeed(loc.speed ? Math.round(loc.speed * 10) / 10 : 0);
+        setAltitude(Math.round(loc.altitude || 0));
+        setAccuracy(Math.round(loc.accuracy || 0));
     };
 
     const calculateDistanceIncrement = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -97,15 +103,15 @@ export default function LiveTrackingScreen() {
             intervalMs: 5000,
             userType: 'guide',
             userName: 'Guía',
-            onLocationUpdate: (loc, analysis) => {
-                setLocation(loc);
+            onLocationUpdate: (loc: LocationData, analysis?: SafetyAnalysis) => {
+                setLocation({ latitude: loc.latitude, longitude: loc.longitude });
                 updateMetrics(loc);
                 setPointsCount(c => c + 1);
 
                 // Add to track polyline
                 const newPoint = {
-                    latitude: loc.coords.latitude,
-                    longitude: loc.coords.longitude,
+                    latitude: loc.latitude,
+                    longitude: loc.longitude,
                     timestamp: new Date(),
                 };
                 setTrackPoints(prev => [...prev, newPoint]);
@@ -115,17 +121,17 @@ export default function LiveTrackingScreen() {
                     const distInc = calculateDistanceIncrement(
                         lastLocation.current.lat,
                         lastLocation.current.lng,
-                        loc.coords.latitude,
-                        loc.coords.longitude
+                        loc.latitude,
+                        loc.longitude
                     );
                     setDistance(d => d + distInc);
                 }
-                lastLocation.current = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+                lastLocation.current = { lat: loc.latitude, lng: loc.longitude };
 
                 // Animate map to follow
                 mapRef.current?.animateToRegion({
-                    latitude: loc.coords.latitude,
-                    longitude: loc.coords.longitude,
+                    latitude: loc.latitude,
+                    longitude: loc.longitude,
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                 }, 500);
@@ -134,15 +140,16 @@ export default function LiveTrackingScreen() {
                     console.log(`📍 Safety: ${analysis.risk_level} (${analysis.risk_score}/100)`);
                 }
             },
-            onConnectionChange: (connected) => {
-                setWsConnected(connected);
+            onConnectionChange: (state: ConnectionState) => {
+                setWsConnected(state === 'connected');
             },
-            onAlert: (alert) => {
+            onAlert: (alert: { title?: string; message: string }) => {
                 Alert.alert(alert.title || 'Alerta', alert.message);
             },
-            onCommand: (command, data) => {
+            onCommand: (command: string, data: unknown) => {
                 if (command === 'ACTIVATE_SOS') {
-                    Alert.alert('🆘 SOS Activado', data?.reason || 'Emergencia activada remotamente');
+                    const sosData = data as { reason?: string } | undefined;
+                    Alert.alert('🆘 SOS Activado', sosData?.reason || 'Emergencia activada remotamente');
                 }
             },
         });
@@ -169,8 +176,8 @@ export default function LiveTrackingScreen() {
     const centerOnUser = () => {
         if (location) {
             mapRef.current?.animateToRegion({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
+                latitude: location.latitude,
+                longitude: location.longitude,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             }, 500);
@@ -270,8 +277,8 @@ export default function LiveTrackingScreen() {
                         {location && (
                             <Marker
                                 coordinate={{
-                                    latitude: location.coords.latitude,
-                                    longitude: location.coords.longitude,
+                                    latitude: location.latitude,
+                                    longitude: location.longitude,
                                 }}
                                 title="Tu ubicación"
                             >

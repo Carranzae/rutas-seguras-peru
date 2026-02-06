@@ -2,11 +2,26 @@
   "name": "ruta-segura-peru",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**",
+      "**/@react-native/**",
+      "**/expo",
+      "**/expo/**",
+      "**/@expo/**",
+      "**/expo-router",
+      "**/expo-router/**",
+      "**/react-native-*",
+      "**/react-native-*/**"
+    ]
+  },
   "scripts": {
+    "start": "concurrently \"npm run dev:admin\" \"npm run dev:agency\" \"npm run dev:mobile\"",
     "dev:mobile": "npm run start -w @ruta-segura/mobile",
     "dev:agency": "npm run dev -w apps/agency-web",
     "dev:admin": "npm run dev -w apps/super-admin",
@@ -14,11 +29,32 @@
     "build:admin": "npm run build -w apps/super-admin",
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
+    "clean": "npx rimraf node_modules apps/*/node_modules packages/*/node_modules package-lock.json",
     "backend:dev": "cd backend && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "backend:start": "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000",
     "test:backend": "cd backend && python -m pytest tests/ -v"
   },
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0",
+    "ansi-escapes": "^7.3.0",
+    "concurrently": "^8.2.0",
+    "encodeurl": "^2.0.0",
+    "escape-html": "^1.0.3",
+    "expo": "~52.0.0",
+    "graceful-fs": "^4.2.11",
+    "makeerror": "^1.0.12",
+    "on-finished": "^2.4.1",
+    "parseurl": "^1.3.3",
+    "rimraf": "^5.0.0"
   }
 }

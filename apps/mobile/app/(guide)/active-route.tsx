@@ -1,7 +1,7 @@
 // Ruta Segura Perú - Active Route Mode Screen
 import { SOSButton } from '@/src/components/common';
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { emergencyService } from '@/src/services/emergency';
+import { useEmergencyStore } from '@/src/features/emergency';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -13,6 +13,7 @@ export default function ActiveRouteMode() {
     const [loading, setLoading] = useState(true);
     const [tour, setTour] = useState<any>(null);
     const [tourists, setTourists] = useState<any[]>([]);
+    const { sendSOS } = useEmergencyStore();
 
     useEffect(() => {
         const timer = setInterval(() => setElapsedTime(t => t + 1), 1000);
@@ -54,11 +55,7 @@ export default function ActiveRouteMode() {
 
     const handleSOS = async () => {
         try {
-            await emergencyService.triggerSOS({
-                description: 'Emergencia activada por guía durante tour activo',
-                severity: 'high',
-                tourId: tour?.id
-            });
+            await sendSOS('Emergencia activada por guía durante tour activo');
 
             Alert.alert(
                 '🚨 SOS ENVIADO',

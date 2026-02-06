@@ -4690,3 +4690,302 @@ sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[Tour(tours)]' has no property
 2026-02-01 22:09:04 | WARNING  | app.middleware.logging:dispatch:32 - [4c76a921] GET /api/v1/admin/dashboard/stats - 401 (10.31ms)
 2026-02-01 22:09:06 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
 2026-02-01 22:09:06 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:20:35 | INFO     | app.main:setup_logging:71 - Logging configured: INFO
+2026-02-03 05:20:35 | INFO     | app.main:lifespan:78 - Starting RutaSeguraPeru (development)
+2026-02-03 05:20:37 | INFO     | app.services.redis_service:connect:53 - Redis connected successfully: redis://localhost:6379/0
+2026-02-03 05:20:37 | INFO     | app.main:lifespan:82 - Redis connected
+2026-02-03 05:20:38 | INFO     | app.main:lifespan:86 - Database tables initialized
+2026-02-03 05:22:28 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:28 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:28 | INFO     | app.middleware.logging:dispatch:20 - [7ecf6cb8] OPTIONS /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:22:28 | INFO     | app.middleware.logging:dispatch:20 - [0b4fe06e] OPTIONS /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:22:29 | INFO     | app.middleware.logging:dispatch:32 - [7ecf6cb8] OPTIONS /api/v1/admin/dashboard/stats - 200 (41.7ms)
+2026-02-03 05:22:29 | INFO     | app.middleware.logging:dispatch:32 - [0b4fe06e] OPTIONS /api/v1/admin/dashboard/stats - 200 (45.72ms)
+2026-02-03 05:22:29 | INFO     | app.middleware.logging:dispatch:20 - [f3c70974] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:22:29 | WARNING  | app.middleware.logging:dispatch:32 - [f3c70974] GET /api/v1/admin/dashboard/stats - 401 (283.04ms)
+2026-02-03 05:22:29 | INFO     | app.middleware.logging:dispatch:20 - [1ea3e237] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:22:29 | WARNING  | app.middleware.logging:dispatch:32 - [1ea3e237] GET /api/v1/admin/dashboard/stats - 401 (145.08ms)
+2026-02-03 05:22:30 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:30 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:34 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:34 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:36 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:36 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:39 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:39 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:41 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:41 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:45 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:45 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:47 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:47 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:50 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:50 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:52 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:52 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:55 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:55 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:22:57 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: None
+2026-02-03 05:22:57 | WARNING  | app.routers.websocket:websocket_admin:194 - WebSocket rejected: No user from token
+2026-02-03 05:23:08 | INFO     | app.middleware.logging:dispatch:20 - [65ea88e9] OPTIONS /api/v1/auth/login - Started
+2026-02-03 05:23:08 | INFO     | app.middleware.logging:dispatch:32 - [65ea88e9] OPTIONS /api/v1/auth/login - 200 (622.13ms)
+2026-02-03 05:23:09 | INFO     | app.middleware.logging:dispatch:20 - [9948afaf] POST /api/v1/auth/login - Started
+2026-02-03 05:23:09 | INFO     | app.routers.auth:login:62 - Login attempt for: admin@rutaseguraperu.com from IP: 127.0.0.1
+2026-02-03 05:23:14 | INFO     | app.middleware.logging:dispatch:32 - [9948afaf] POST /api/v1/auth/login - 200 (4986.01ms)
+2026-02-03 05:23:15 | INFO     | app.middleware.logging:dispatch:20 - [bc052d93] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:20 - [3e91f9ad] OPTIONS /api/v1/auth/me - Started
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:20 - [b94487ca] OPTIONS /api/v1/auth/me - Started
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:32 - [3e91f9ad] OPTIONS /api/v1/auth/me - 200 (11.59ms)
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:32 - [b94487ca] OPTIONS /api/v1/auth/me - 200 (11.58ms)
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:20 - [0d2aa360] GET /api/v1/auth/me - Started
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:32 - [bc052d93] GET /api/v1/admin/dashboard/stats - 200 (660.72ms)
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:20 - [b0d6e612] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:16 | INFO     | app.middleware.logging:dispatch:32 - [b0d6e612] GET /api/v1/admin/dashboard/stats - 200 (482.19ms)
+2026-02-03 05:23:17 | INFO     | app.middleware.logging:dispatch:32 - [0d2aa360] GET /api/v1/auth/me - 200 (1080.44ms)
+2026-02-03 05:23:17 | INFO     | app.middleware.logging:dispatch:20 - [946fd0db] GET /api/v1/auth/me - Started
+2026-02-03 05:23:17 | INFO     | app.middleware.logging:dispatch:32 - [946fd0db] GET /api/v1/auth/me - 200 (33.78ms)
+2026-02-03 05:23:28 | INFO     | app.middleware.logging:dispatch:20 - [85e32910] OPTIONS /api/v1/agencies - Started
+2026-02-03 05:23:28 | INFO     | app.middleware.logging:dispatch:20 - [762f371b] OPTIONS /api/v1/agencies - Started
+2026-02-03 05:23:28 | INFO     | app.middleware.logging:dispatch:32 - [85e32910] OPTIONS /api/v1/agencies - 200 (6.05ms)
+2026-02-03 05:23:28 | INFO     | app.middleware.logging:dispatch:32 - [762f371b] OPTIONS /api/v1/agencies - 200 (13.05ms)
+2026-02-03 05:23:28 | INFO     | app.middleware.logging:dispatch:20 - [655522e4] GET /api/v1/agencies - Started
+2026-02-03 05:23:29 | INFO     | app.middleware.logging:dispatch:32 - [655522e4] GET /api/v1/agencies - 200 (822.97ms)
+2026-02-03 05:23:29 | INFO     | app.middleware.logging:dispatch:20 - [d3232061] GET /api/v1/agencies - Started
+2026-02-03 05:23:29 | INFO     | app.middleware.logging:dispatch:32 - [d3232061] GET /api/v1/agencies - 200 (85.47ms)
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:20 - [5ea79341] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:20 - [5408a274] GET /api/v1/auth/me - Started
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:32 - [5408a274] GET /api/v1/auth/me - 200 (19.75ms)
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:20 - [36b0a30d] GET /api/v1/auth/me - Started
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:32 - [36b0a30d] GET /api/v1/auth/me - 200 (36.0ms)
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:32 - [5ea79341] GET /api/v1/admin/dashboard/stats - 200 (191.58ms)
+2026-02-03 05:23:37 | INFO     | app.middleware.logging:dispatch:20 - [ef2bd8e0] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:38 | INFO     | app.middleware.logging:dispatch:32 - [ef2bd8e0] GET /api/v1/admin/dashboard/stats - 200 (116.98ms)
+2026-02-03 05:23:49 | INFO     | app.middleware.logging:dispatch:20 - [a4c46c89] GET /api/v1/agencies - Started
+2026-02-03 05:23:49 | INFO     | app.middleware.logging:dispatch:32 - [a4c46c89] GET /api/v1/agencies - 200 (22.01ms)
+2026-02-03 05:23:49 | INFO     | app.middleware.logging:dispatch:20 - [3b393d67] GET /api/v1/agencies - Started
+2026-02-03 05:23:49 | INFO     | app.middleware.logging:dispatch:32 - [3b393d67] GET /api/v1/agencies - 200 (32.0ms)
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:20 - [5506b413] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:20 - [7853f9d0] GET /api/v1/auth/me - Started
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:32 - [7853f9d0] GET /api/v1/auth/me - 200 (62.51ms)
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:20 - [b9f6ab45] GET /api/v1/auth/me - Started
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:32 - [5506b413] GET /api/v1/admin/dashboard/stats - 200 (151.73ms)
+2026-02-03 05:23:51 | INFO     | app.middleware.logging:dispatch:20 - [bf05731b] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:23:52 | INFO     | app.middleware.logging:dispatch:32 - [b9f6ab45] GET /api/v1/auth/me - 200 (181.7ms)
+2026-02-03 05:23:52 | INFO     | app.middleware.logging:dispatch:32 - [bf05731b] GET /api/v1/admin/dashboard/stats - 200 (212.08ms)
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:20 - [9ccdb9d9] OPTIONS /api/v1/guides - Started
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:32 - [9ccdb9d9] OPTIONS /api/v1/guides - 200 (2.01ms)
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:20 - [017570fa] OPTIONS /api/v1/guides - Started
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:20 - [09f07d58] GET /api/v1/guides - Started
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:32 - [017570fa] OPTIONS /api/v1/guides - 200 (5.95ms)
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:32 - [09f07d58] GET /api/v1/guides - 200 (234.04ms)
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:20 - [9e78dc5d] GET /api/v1/guides - Started
+2026-02-03 05:23:57 | INFO     | app.middleware.logging:dispatch:32 - [9e78dc5d] GET /api/v1/guides - 200 (74.93ms)
+2026-02-03 05:24:00 | INFO     | app.middleware.logging:dispatch:20 - [09d1eef8] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:00 | INFO     | app.middleware.logging:dispatch:20 - [4190578c] GET /api/v1/auth/me - Started
+2026-02-03 05:24:00 | INFO     | app.middleware.logging:dispatch:32 - [4190578c] GET /api/v1/auth/me - 200 (84.35ms)
+2026-02-03 05:24:00 | INFO     | app.middleware.logging:dispatch:20 - [cef835cd] GET /api/v1/auth/me - Started
+2026-02-03 05:24:01 | INFO     | app.middleware.logging:dispatch:32 - [09d1eef8] GET /api/v1/admin/dashboard/stats - 200 (165.2ms)
+2026-02-03 05:24:01 | INFO     | app.middleware.logging:dispatch:32 - [cef835cd] GET /api/v1/auth/me - 200 (48.19ms)
+2026-02-03 05:24:01 | INFO     | app.middleware.logging:dispatch:20 - [ef0f7dea] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:01 | INFO     | app.middleware.logging:dispatch:32 - [ef0f7dea] GET /api/v1/admin/dashboard/stats - 200 (116.55ms)
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:20 - [5c09cba1] OPTIONS /api/v1/emergencies/active - Started
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:20 - [db3e0f34] OPTIONS /api/v1/emergencies/active - Started
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:32 - [5c09cba1] OPTIONS /api/v1/emergencies/active - 200 (6.78ms)
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:32 - [db3e0f34] OPTIONS /api/v1/emergencies/active - 200 (12.7ms)
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:20 - [c9bda16c] GET /api/v1/emergencies/active - Started
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:32 - [c9bda16c] GET /api/v1/emergencies/active - 200 (152.6ms)
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:20 - [fc2c973b] GET /api/v1/emergencies/active - Started
+2026-02-03 05:24:05 | INFO     | app.middleware.logging:dispatch:32 - [fc2c973b] GET /api/v1/emergencies/active - 200 (76.3ms)
+2026-02-03 05:24:15 | INFO     | app.middleware.logging:dispatch:20 - [306590a7] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:15 | INFO     | app.middleware.logging:dispatch:20 - [086e9bde] GET /api/v1/auth/me - Started
+2026-02-03 05:24:15 | INFO     | app.middleware.logging:dispatch:32 - [306590a7] GET /api/v1/admin/dashboard/stats - 200 (222.52ms)
+2026-02-03 05:24:15 | INFO     | app.middleware.logging:dispatch:32 - [086e9bde] GET /api/v1/auth/me - 200 (182.1ms)
+2026-02-03 05:24:16 | INFO     | app.middleware.logging:dispatch:20 - [1f71fd3d] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:16 | INFO     | app.middleware.logging:dispatch:20 - [6f03e7e5] GET /api/v1/auth/me - Started
+2026-02-03 05:24:16 | INFO     | app.middleware.logging:dispatch:32 - [6f03e7e5] GET /api/v1/auth/me - 200 (349.75ms)
+2026-02-03 05:24:16 | INFO     | app.middleware.logging:dispatch:32 - [1f71fd3d] GET /api/v1/admin/dashboard/stats - 200 (718.81ms)
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:20 - [fca1a64d] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:20 - [d5cdfd78] GET /api/v1/auth/me - Started
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:32 - [d5cdfd78] GET /api/v1/auth/me - 200 (45.29ms)
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:20 - [f1627bb3] GET /api/v1/auth/me - Started
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:32 - [fca1a64d] GET /api/v1/admin/dashboard/stats - 200 (104.6ms)
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:20 - [83f31f74] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:32 - [f1627bb3] GET /api/v1/auth/me - 200 (45.71ms)
+2026-02-03 05:24:38 | INFO     | app.middleware.logging:dispatch:32 - [83f31f74] GET /api/v1/admin/dashboard/stats - 200 (111.0ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [32723ae5] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [5877cf4d] OPTIONS /api/v1/payments - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [5877cf4d] OPTIONS /api/v1/payments - 200 (4.84ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [e0551eb5] OPTIONS /api/v1/payments - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [e0551eb5] OPTIONS /api/v1/payments - 200 (13.54ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [e6b4da2a] GET /api/v1/payments - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [e6b4da2a] GET /api/v1/payments - 307 (42.25ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [5e31dc1a] GET /api/v1/payments - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [5e31dc1a] GET /api/v1/payments - 307 (15.75ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [07be08db] OPTIONS /api/v1/payments/ - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [07be08db] OPTIONS /api/v1/payments/ - 200 (13.14ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [e5c771d9] OPTIONS /api/v1/payments/ - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [e5c771d9] OPTIONS /api/v1/payments/ - 200 (10.94ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [2af5131d] GET /api/v1/payments/ - Started
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:32 - [32723ae5] GET /api/v1/admin/dashboard/stats - 200 (235.27ms)
+2026-02-03 05:24:47 | INFO     | app.middleware.logging:dispatch:20 - [f73c5b8f] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:48 | INFO     | app.middleware.logging:dispatch:32 - [2af5131d] GET /api/v1/payments/ - 200 (255.6ms)
+2026-02-03 05:24:48 | INFO     | app.middleware.logging:dispatch:32 - [f73c5b8f] GET /api/v1/admin/dashboard/stats - 200 (203.78ms)
+2026-02-03 05:24:48 | INFO     | app.middleware.logging:dispatch:20 - [60a2d071] GET /api/v1/payments/ - Started
+2026-02-03 05:24:48 | INFO     | app.middleware.logging:dispatch:32 - [60a2d071] GET /api/v1/payments/ - 200 (69.38ms)
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:20 - [8a75dca1] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:20 - [3bb19898] GET /api/v1/auth/me - Started
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:32 - [3bb19898] GET /api/v1/auth/me - 200 (112.3ms)
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:20 - [81b565da] GET /api/v1/auth/me - Started
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:32 - [8a75dca1] GET /api/v1/admin/dashboard/stats - 200 (265.23ms)
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:20 - [00b7c896] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:32 - [81b565da] GET /api/v1/auth/me - 200 (192.39ms)
+2026-02-03 05:24:52 | INFO     | app.middleware.logging:dispatch:32 - [00b7c896] GET /api/v1/admin/dashboard/stats - 200 (203.81ms)
+2026-02-03 05:24:58 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:24:58 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:24:58 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:24:58 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 1
+2026-02-03 05:25:29 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:25:29 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 0
+2026-02-03 05:25:38 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:25:38 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:25:39 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:25:39 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 1
+2026-02-03 05:25:39 | INFO     | app.middleware.logging:dispatch:20 - [ed941384] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:25:41 | INFO     | app.middleware.logging:dispatch:32 - [ed941384] GET /api/v1/admin/dashboard/stats - 200 (2066.96ms)
+2026-02-03 05:25:41 | INFO     | app.middleware.logging:dispatch:20 - [f1c7b8b3] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:25:41 | INFO     | app.middleware.logging:dispatch:32 - [f1c7b8b3] GET /api/v1/admin/dashboard/stats - 200 (383.41ms)
+2026-02-03 05:25:43 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:25:43 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:25:43 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:25:43 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:27:07 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:08 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:27:08 | INFO     | app.middleware.logging:dispatch:20 - [17972280] OPTIONS /api/v1/admin/users - Started
+2026-02-03 05:27:08 | INFO     | app.middleware.logging:dispatch:20 - [d7b54b60] OPTIONS /api/v1/admin/users - Started
+2026-02-03 05:27:08 | INFO     | app.middleware.logging:dispatch:32 - [17972280] OPTIONS /api/v1/admin/users - 200 (31.11ms)
+2026-02-03 05:27:08 | INFO     | app.middleware.logging:dispatch:32 - [d7b54b60] OPTIONS /api/v1/admin/users - 200 (50.69ms)
+2026-02-03 05:27:08 | INFO     | app.middleware.logging:dispatch:20 - [734fcccb] GET /api/v1/admin/users - Started
+2026-02-03 05:27:09 | INFO     | app.middleware.logging:dispatch:32 - [734fcccb] GET /api/v1/admin/users - 200 (962.13ms)
+2026-02-03 05:27:09 | INFO     | app.middleware.logging:dispatch:20 - [ca292332] GET /api/v1/admin/users - Started
+2026-02-03 05:27:09 | INFO     | app.middleware.logging:dispatch:32 - [ca292332] GET /api/v1/admin/users - 200 (163.86ms)
+2026-02-03 05:27:12 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:27:12 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:27:12 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:12 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:20 - [818b497d] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:20 - [fbaa31b8] GET /api/v1/auth/me - Started
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:32 - [fbaa31b8] GET /api/v1/auth/me - 200 (186.91ms)
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:20 - [4e46b169] GET /api/v1/auth/me - Started
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:32 - [4e46b169] GET /api/v1/auth/me - 200 (145.09ms)
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:32 - [818b497d] GET /api/v1/admin/dashboard/stats - 200 (419.05ms)
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:20 - [df27866c] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:27:33 | INFO     | app.middleware.logging:dispatch:32 - [df27866c] GET /api/v1/admin/dashboard/stats - 200 (103.3ms)
+2026-02-03 05:27:44 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:44 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:27:44 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:44 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 0
+2026-02-03 05:27:47 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:27:47 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:27:47 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:47 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 1
+2026-02-03 05:27:47 | INFO     | app.middleware.logging:dispatch:20 - [f4637e70] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:27:47 | INFO     | app.middleware.logging:dispatch:32 - [f4637e70] GET /api/v1/admin/dashboard/stats - 200 (506.15ms)
+2026-02-03 05:27:48 | INFO     | app.middleware.logging:dispatch:20 - [caab1335] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:27:48 | INFO     | app.middleware.logging:dispatch:32 - [caab1335] GET /api/v1/admin/dashboard/stats - 200 (437.27ms)
+2026-02-03 05:27:52 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:27:52 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:27:52 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:52 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:27:59 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:27:59 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:27:59 | INFO     | app.middleware.logging:dispatch:20 - [b038a0b0] GET /api/v1/guides - Started
+2026-02-03 05:28:00 | INFO     | app.middleware.logging:dispatch:32 - [b038a0b0] GET /api/v1/guides - 200 (289.94ms)
+2026-02-03 05:28:00 | INFO     | app.middleware.logging:dispatch:20 - [ddda0db2] GET /api/v1/guides - Started
+2026-02-03 05:28:00 | INFO     | app.middleware.logging:dispatch:32 - [ddda0db2] GET /api/v1/guides - 200 (85.67ms)
+2026-02-03 05:28:04 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:28:04 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:28:04 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:28:04 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:28:27 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:28:27 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:28:27 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:28:27 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 0
+2026-02-03 05:28:31 | INFO     | app.middleware.logging:dispatch:20 - [21020b34] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:28:31 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:28:31 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:28:31 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:28:31 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 1
+2026-02-03 05:28:31 | INFO     | app.middleware.logging:dispatch:32 - [21020b34] GET /api/v1/admin/dashboard/stats - 200 (448.26ms)
+2026-02-03 05:28:31 | INFO     | app.middleware.logging:dispatch:20 - [874b654b] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:28:31 | INFO     | app.middleware.logging:dispatch:32 - [874b654b] GET /api/v1/admin/dashboard/stats - 200 (299.98ms)
+2026-02-03 05:28:36 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:28:36 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:28:36 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:28:36 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:29:10 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:29:10 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [e40a9f22] OPTIONS /api/v1/payments/izipay/status - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [e40a9f22] OPTIONS /api/v1/payments/izipay/status - 200 (8.05ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [fba05a88] OPTIONS /api/v1/payments/izipay/status - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [fba05a88] OPTIONS /api/v1/payments/izipay/status - 200 (2.01ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [ad909aa0] GET /api/v1/payments - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [ad909aa0] GET /api/v1/payments - 307 (20.61ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [c97bf02b] GET /api/v1/payments/izipay/status - Started
+2026-02-03 05:29:10 | WARNING  | app.middleware.logging:dispatch:32 - [c97bf02b] GET /api/v1/payments/izipay/status - 404 (26.91ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [c7faea4e] GET /api/v1/payments - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [c7faea4e] GET /api/v1/payments - 307 (13.35ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [f7db5bf3] GET /api/v1/payments/ - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [ea00f432] GET /api/v1/payments/izipay/status - Started
+2026-02-03 05:29:10 | WARNING  | app.middleware.logging:dispatch:32 - [ea00f432] GET /api/v1/payments/izipay/status - 404 (13.16ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [f7db5bf3] GET /api/v1/payments/ - 200 (163.95ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [17f517b7] GET /api/v1/payments/ - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [5f63e6cc] OPTIONS /api/v1/payments/stats/platform - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [5f63e6cc] OPTIONS /api/v1/payments/stats/platform - 200 (4.68ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [a297f2e1] GET /api/v1/payments/stats/platform - Started
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [a297f2e1] GET /api/v1/payments/stats/platform - 200 (196.44ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:32 - [17f517b7] GET /api/v1/payments/ - 200 (342.45ms)
+2026-02-03 05:29:10 | INFO     | app.middleware.logging:dispatch:20 - [ae0a6143] GET /api/v1/payments/stats/platform - Started
+2026-02-03 05:29:11 | INFO     | app.middleware.logging:dispatch:32 - [ae0a6143] GET /api/v1/payments/stats/platform - 200 (46.82ms)
+2026-02-03 05:29:14 | INFO     | app.middleware.logging:dispatch:20 - [04c6b03d] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:20 - [3b82cc31] GET /api/v1/auth/me - Started
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:32 - [3b82cc31] GET /api/v1/auth/me - 200 (114.18ms)
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:20 - [03a917ab] GET /api/v1/auth/me - Started
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:32 - [04c6b03d] GET /api/v1/admin/dashboard/stats - 200 (209.79ms)
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:32 - [03a917ab] GET /api/v1/auth/me - 200 (35.42ms)
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:20 - [0797bd1b] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:29:15 | INFO     | app.middleware.logging:dispatch:32 - [0797bd1b] GET /api/v1/admin/dashboard/stats - 200 (97.75ms)
+2026-02-03 05:29:15 | INFO     | app.routers.websocket:websocket_admin:191 - WebSocket admin connection attempt. User data: {'id': '6bed3095-2ea0-4a6d-8673-b2eca0940a95', 'role': 'super_admin', 'email': 'admin@rutaseguraperu.com'}
+2026-02-03 05:29:15 | INFO     | app.routers.websocket:websocket_admin:199 - WebSocket user role: 'super_admin'
+2026-02-03 05:29:15 | INFO     | app.routers.websocket:websocket_admin:207 - WebSocket admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:29:15 | INFO     | app.core.websocket_manager:connect_admin:35 - Admin connected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95 | Total admins: 2
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:20 - [1a969b0b] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:20 - [2292d8e2] GET /api/v1/auth/me - Started
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:32 - [2292d8e2] GET /api/v1/auth/me - 200 (41.92ms)
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:32 - [1a969b0b] GET /api/v1/admin/dashboard/stats - 200 (79.31ms)
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:20 - [ffe77ccd] GET /api/v1/auth/me - Started
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:20 - [a388d5e9] GET /api/v1/admin/dashboard/stats - Started
+2026-02-03 05:29:28 | INFO     | app.middleware.logging:dispatch:32 - [ffe77ccd] GET /api/v1/auth/me - 200 (37.86ms)
+2026-02-03 05:29:29 | INFO     | app.middleware.logging:dispatch:32 - [a388d5e9] GET /api/v1/admin/dashboard/stats - 200 (106.83ms)
+2026-02-03 05:30:04 | INFO     | app.middleware.logging:dispatch:20 - [b2668dec] GET /api/v1/agencies - Started
+2026-02-03 05:30:04 | INFO     | app.middleware.logging:dispatch:32 - [b2668dec] GET /api/v1/agencies - 200 (106.25ms)
+2026-02-03 05:30:04 | INFO     | app.middleware.logging:dispatch:20 - [d3c20f60] GET /api/v1/agencies - Started
+2026-02-03 05:30:05 | INFO     | app.middleware.logging:dispatch:32 - [d3c20f60] GET /api/v1/agencies - 200 (755.37ms)
+2026-02-03 05:30:09 | INFO     | app.middleware.logging:dispatch:20 - [f7476104] GET /api/v1/agencies - Started
+2026-02-03 05:30:09 | INFO     | app.middleware.logging:dispatch:32 - [f7476104] GET /api/v1/agencies - 200 (21.99ms)
+2026-02-03 05:30:14 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:30:14 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 1
+2026-02-03 05:30:14 | INFO     | app.routers.websocket:websocket_admin:288 - Admin disconnected: 6bed3095-2ea0-4a6d-8673-b2eca0940a95
+2026-02-03 05:30:14 | INFO     | app.core.websocket_manager:disconnect_admin:56 - Admin disconnected | Total admins: 0
+2026-02-05 21:40:38 | INFO     | app.main:setup_logging:71 - Logging configured: INFO
+2026-02-05 21:40:38 | INFO     | app.main:lifespan:78 - Starting RutaSeguraPeru (development)
+2026-02-05 21:40:40 | INFO     | app.services.redis_service:connect:53 - Redis connected successfully: redis://localhost:6379/0
+2026-02-05 21:40:40 | INFO     | app.main:lifespan:82 - Redis connected
+2026-02-05 21:40:43 | INFO     | app.main:lifespan:86 - Database tables initialized
+2026-02-05 21:49:23 | INFO     | app.middleware.logging:dispatch:20 - [b5e6d621] GET /docs - Started
+2026-02-05 21:49:23 | INFO     | app.middleware.logging:dispatch:32 - [b5e6d621] GET /docs - 200 (26.41ms)
+2026-02-05 21:49:24 | INFO     | app.middleware.logging:dispatch:20 - [9436f29a] GET /openapi.json - Started
+2026-02-05 21:49:25 | INFO     | app.middleware.logging:dispatch:32 - [9436f29a] GET /openapi.json - 200 (557.05ms)
+2026-02-05 21:50:10 | INFO     | app.middleware.logging:dispatch:20 - [15ffc5c0] GET /docs - Started
+2026-02-05 21:50:10 | INFO     | app.middleware.logging:dispatch:32 - [15ffc5c0] GET /docs - 200 (9.71ms)
+2026-02-05 21:50:11 | INFO     | app.middleware.logging:dispatch:20 - [d0842f4b] GET /openapi.json - Started
+2026-02-05 21:50:11 | INFO     | app.middleware.logging:dispatch:32 - [d0842f4b] GET /openapi.json - 200 (20.22ms)

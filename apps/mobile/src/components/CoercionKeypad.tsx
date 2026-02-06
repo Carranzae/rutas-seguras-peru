@@ -2,6 +2,7 @@
  * Ruta Segura Perú - Coercion PIN Keypad
  * Dual-PIN system with silent alarm for duress situations
  */
+import { httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import * as SecureStore from 'expo-secure-store';
@@ -14,7 +15,6 @@ import {
     Vibration,
     View
 } from 'react-native';
-import api from '../services/api';
 
 interface CoercionKeypadProps {
     onSuccess: () => void;
@@ -148,7 +148,7 @@ export default function CoercionKeypad({ onSuccess, onCancel, visible }: Coercio
             // Get current location
             const location = await getCurrentLocation();
 
-            await api.post('/emergencies/sos', {
+            await httpClient.post('/emergencies/sos', {
                 location: {
                     latitude: location?.latitude || 0,
                     longitude: location?.longitude || 0,

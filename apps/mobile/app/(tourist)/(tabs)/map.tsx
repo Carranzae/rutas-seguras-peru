@@ -3,8 +3,8 @@
  * Interactive map with tour locations and guide tracking using react-native-maps
  */
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { useLanguage } from '@/src/i18n';
-import { api } from '@/src/services/api';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
@@ -108,10 +108,10 @@ export default function MapScreen() {
 
     const loadNearbyTours = async (lat: number, lng: number) => {
         try {
-            const response = await api.get(`/tours/search?lat=${lat}&lng=${lng}&radius=50`);
+            const response = await httpClient.get<{ items: any[] }>(`/tours/search?lat=${lat}&lng=${lng}&radius=50`);
 
-            if (response.ok && response.data?.items) {
-                const toursWithLocation = response.data.items.map((tour: any, index: number) => ({
+            if (response.data?.items) {
+                const toursWithLocation = response.data.items.map((tour: any) => ({
                     id: tour.id,
                     name: tour.name,
                     distance: calculateDistance(lat, lng, tour.latitude || lat + (Math.random() - 0.5) * 0.1, tour.longitude || lng + (Math.random() - 0.5) * 0.1),

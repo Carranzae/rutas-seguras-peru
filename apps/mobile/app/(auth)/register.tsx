@@ -1,6 +1,6 @@
 // Ruta Segura Perú - Register Screen
 import { Colors, Spacing } from '@/src/constants/theme';
-import { authService } from '@/src/services/auth';
+import { useAuth } from '@/src/features/auth';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -18,13 +18,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RegisterScreen() {
+    const { register, isLoading } = useAuth();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [role, setRole] = useState<'tourist' | 'guide'>('tourist');
-    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = (): boolean => {
@@ -57,10 +57,8 @@ export default function RegisterScreen() {
     const handleRegister = async () => {
         if (!validate()) return;
 
-        setLoading(true);
         try {
-            // Call backend API
-            const user = await authService.register({
+            await register({
                 email: email.trim().toLowerCase(),
                 password,
                 full_name: name.trim(),
@@ -68,7 +66,6 @@ export default function RegisterScreen() {
                 role,
             });
 
-            // Show success message
             Alert.alert(
                 '¡Cuenta Creada!',
                 'Tu cuenta ha sido creada exitosamente. Por favor inicia sesión.',
@@ -79,24 +76,10 @@ export default function RegisterScreen() {
                     },
                 ]
             );
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Registration error:', error);
-
-            let message = 'No se pudo crear la cuenta. Intenta nuevamente.';
-
-            if (error.detail) {
-                if (error.detail.includes('already exists') || error.detail.includes('ya existe')) {
-                    message = 'Este correo ya está registrado. Intenta iniciar sesión.';
-                } else {
-                    message = error.detail;
-                }
-            } else if (error.status === 0) {
-                message = 'Sin conexión. Verifica tu internet.';
-            }
-
-            Alert.alert('Error', message);
-        } finally {
-            setLoading(false);
+            const errorMessage = error instanceof Error ? error.message : 'No se pudo crear la cuenta.';
+            Alert.alert('Error', errorMessage);
         }
     };
 
@@ -208,11 +191,11 @@ export default function RegisterScreen() {
                         </View>
 
                         <TouchableOpacity
-                            style={[styles.registerButton, loading && styles.registerButtonDisabled]}
+                            style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
                             onPress={handleRegister}
-                            disabled={loading}
+                            disabled={isLoading}
                         >
-                            {loading ? (
+                            {isLoading ? (
                                 <ActivityIndicator color="white" />
                             ) : (
                                 <Text style={styles.registerButtonText}>Crear Cuenta</Text>

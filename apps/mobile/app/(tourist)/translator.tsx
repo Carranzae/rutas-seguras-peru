@@ -2,7 +2,7 @@
  * Ruta Segura Perú - Tourist AI Translator Screen
  * Real-time speech translation for tourists
  */
-import { api } from '@/src/services/api';
+import { httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { router } from 'expo-router';
@@ -137,14 +137,14 @@ export default function TranslatorScreen() {
         setIsTranslating(true);
 
         try {
-            const response = await api.post('/ai/translate', {
+            const response = await httpClient.post<{ translated_text?: string }>('/ai/translate', {
                 text: textToTranslate,
                 source_language: sourceLang.code,
                 target_language: targetLang.code,
             });
 
             let result = '';
-            if (response.ok && response.data?.translated_text) {
+            if (response.data?.translated_text) {
                 result = response.data.translated_text;
             } else {
                 // Fallback translations for demo

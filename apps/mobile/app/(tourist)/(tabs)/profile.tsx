@@ -4,8 +4,8 @@
  */
 import { ProfileSkeleton } from '@/src/components/common/Skeleton';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { SupportedLanguage, useLanguage } from '@/src/i18n';
-import { api } from '@/src/services/api';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -68,14 +68,14 @@ export default function ProfileScreen() {
             }
 
             // Fetch bookings from backend
-            const bookingsResponse = await api.get('/bookings/my');
-            if (bookingsResponse.ok && bookingsResponse.data?.items) {
+            const bookingsResponse = await httpClient.get<{ items: Booking[] }>('/bookings/my');
+            if (bookingsResponse.data?.items) {
                 setBookings(bookingsResponse.data.items);
             }
 
             // Fetch reviews from backend
-            const reviewsResponse = await api.get('/reviews/my');
-            if (reviewsResponse.ok && reviewsResponse.data?.items) {
+            const reviewsResponse = await httpClient.get<{ items: Review[] }>('/reviews/my');
+            if (reviewsResponse.data?.items) {
                 setReviews(reviewsResponse.data.items);
             }
         } catch (error) {
