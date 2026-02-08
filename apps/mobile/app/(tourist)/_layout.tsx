@@ -19,6 +19,11 @@ export default function TouristLayout() {
             <Stack.Screen name="emergency/tracking" options={{ presentation: 'card' }} />
             <Stack.Screen name="emergency/whatsapp" options={{ presentation: 'card' }} />
             <Stack.Screen name="emergency/permissions" options={{ presentation: 'card' }} />
+            <Stack.Screen name="emergency-active" options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="live-translator" options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="trust-circle" options={{ presentation: 'card' }} />
+            <Stack.Screen name="bookings/handshake/[id]" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="bookings/handshake/alternatives" options={{ presentation: 'card' }} />
         </Stack>
     );
 }

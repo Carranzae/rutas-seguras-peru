@@ -1,6 +1,6 @@
 /**
  * Ruta Segura Perú - Tourist Profile Screen
- * Profile with bookings, reviews, settings, language change
+ * Profile with bookings, reviews, settings, language change - with full i18n
  */
 import { ProfileSkeleton } from '@/src/components/common/Skeleton';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
@@ -88,7 +88,7 @@ export default function ProfileScreen() {
     const handleLogout = async () => {
         Alert.alert(
             t.profile.logout,
-            language === 'es' ? '¿Estás seguro que deseas cerrar sesión?' : 'Are you sure you want to log out?',
+            t.profile.logoutConfirm,
             [
                 { text: t.common.cancel, style: 'cancel' },
                 {
@@ -119,11 +119,11 @@ export default function ProfileScreen() {
     };
 
     const getStatusText = (status: Booking['status']) => {
-        const texts = {
-            pending: language === 'es' ? 'Pendiente' : 'Pending',
-            confirmed: language === 'es' ? 'Confirmado' : 'Confirmed',
-            completed: language === 'es' ? 'Completado' : 'Completed',
-            cancelled: language === 'es' ? 'Cancelado' : 'Cancelled',
+        const texts: Record<Booking['status'], string> = {
+            pending: t.profile.pending,
+            confirmed: t.profile.confirmed,
+            completed: t.profile.completed,
+            cancelled: t.profile.cancelled,
         };
         return texts[status] || status;
     };
@@ -219,7 +219,7 @@ export default function ProfileScreen() {
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{bookings.filter(b => b.status === 'completed').length}</Text>
-                        <Text style={styles.statLabel}>{language === 'es' ? 'Tours' : 'Tours'}</Text>
+                        <Text style={styles.statLabel}>{t.profile.tours}</Text>
                     </View>
                 </View>
 

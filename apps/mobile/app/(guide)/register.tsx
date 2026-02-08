@@ -2,12 +2,12 @@
  * Ruta Segura Perú - Guide Registration Flow
  * Complete multi-step registration with: Personal data, DNI, DIRCETUR, Biometric, Waiting
  */
-import { httpClient } from '@/src/core/api';
+import { API_CONFIG, httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -47,6 +47,13 @@ interface VerificationResponse {
 
 export default function GuideRegistrationScreen() {
     const router = useRouter();
+    // Receive params from auth/register screen
+    const params = useLocalSearchParams<{
+        name?: string;
+        email?: string;
+        phone?: string;
+        password?: string;
+    }>();
     const [step, setStep] = useState<RegistrationStep>('personal');
     const [loading, setLoading] = useState(false);
 
@@ -62,6 +69,19 @@ export default function GuideRegistrationScreen() {
         specialties: '',
         password: '',
     });
+
+    // Initialize form with params from auth/register screen
+    useEffect(() => {
+        if (params.name || params.email || params.phone || params.password) {
+            setGuideData(prev => ({
+                ...prev,
+                full_name: params.name || prev.full_name,
+                email: params.email || prev.email,
+                phone: params.phone || prev.phone,
+                password: params.password || prev.password,
+            }));
+        }
+    }, [params.name, params.email, params.phone, params.password]);
 
     // Document images
     const [dniPhoto, setDniPhoto] = useState<string | null>(null);
@@ -163,7 +183,7 @@ export default function GuideRegistrationScreen() {
     // Get API URL helper
     const getApiUrl = async () => {
         // This would come from config
-        return 'http://localhost:8000/api/v1';
+        return API_CONFIG.BASE_URL + API_CONFIG.API_VERSION;
     };
 
     // Submit complete registration
@@ -183,18 +203,34 @@ export default function GuideRegistrationScreen() {
                 password: guideData.password,
                 full_name: guideData.full_name,
                 phone: guideData.phone,
-                birth_date: guideData.birth_date,
-                dni_number: guideData.dni_number,
                 role: 'guide',
             });
 
-            // 2. Upload documents (in production, upload to S3/cloud)
-            // For now, we'll use base64 or local URLs
-            const dniUrl = dniPhoto; // In production: await uploadImage(dniPhoto, 'dni');
-            const certUrl = certificatePhoto; // In production: await uploadImage(certificatePhoto, 'certificate');
-            const selfieUrl = selfiePhoto; // In production: await uploadImage(selfiePhoto, 'selfie');
+            // 2. Login to get authentication token
+            const loginResponse = await httpClient.post<{
+                access_token: string;
+                refresh_token: string;
+                user: { id: string };
+            }>('/auth/login', {
+                email: guideData.email,
+                password: guideData.password,
+            });
 
-            // 3. Submit biometric verification
+            if (!loginResponse.data?.access_token) {
+                throw new Error('Error al iniciar sesión después del registro');
+            }
+
+            // Store token for subsequent requests
+            const token = loginResponse.data.access_token;
+            await AsyncStorage.setItem('access_token', token);
+            await AsyncStorage.setItem('refresh_token', loginResponse.data.refresh_token);
+
+            // 3. Upload documents (TODO: in production, upload to S3/cloud)
+            const dniUrl = dniPhoto;
+            const certUrl = certificatePhoto;
+            const selfieUrl = selfiePhoto;
+
+            // 4. Submit biometric verification (now with auth token)
             const biometricHash = `hash_${Date.now()}_${guideData.dni_number}`;
             const deviceSignature = `device_${Date.now()}`;
 
@@ -206,14 +242,14 @@ export default function GuideRegistrationScreen() {
                 liveness_score: 95,
             });
 
-            // 4. Submit document verification
+            // 5. Submit document verification
             await httpClient.post('/verifications/document', {
                 verification_type: 'document_dni',
                 document_url: dniUrl,
                 document_score: 90,
             });
 
-            // 5. Submit DIRCETUR license
+            // 6. Submit DIRCETUR license
             await httpClient.post('/verifications/document', {
                 verification_type: 'dircetur_license',
                 document_url: certUrl,
@@ -234,10 +270,8 @@ export default function GuideRegistrationScreen() {
             setStep('waiting');
         } catch (error: any) {
             console.error('Registration error:', error);
-            Alert.alert(
-                'Error',
-                error.detail || 'No se pudo completar el registro. Intenta nuevamente.'
-            );
+            const errorMessage = error.message || error.detail || 'No se pudo completar el registro. Intenta nuevamente.';
+            Alert.alert('Error', errorMessage);
             setStep('biometric');
         } finally {
             setLoading(false);
@@ -615,24 +649,57 @@ export default function GuideRegistrationScreen() {
     // Render Approved Step
     const renderApprovedStep = () => (
         <View style={styles.centerContainer}>
-            <View style={styles.successIcon}>
-                <Ionicons name="checkmark-circle" size={80} color="#4CAF50" />
+            {/* Celebration Animation */}
+            <View style={styles.celebrationContainer}>
+                <Text style={styles.confettiEmoji}>🎉</Text>
+                <Text style={styles.confettiEmoji2}>🎊</Text>
             </View>
-            <Text style={styles.successTitle}>¡Bienvenido, Guía!</Text>
-            <Text style={styles.successSubtitle}>
-                Tu cuenta ha sido aprobada. Ya puedes comenzar a ofrecer tus servicios.
+
+            <View style={styles.successIcon}>
+                <Ionicons name="checkmark-circle" size={100} color="#4CAF50" />
+            </View>
+
+            <Text style={styles.celebrationTitle}>¡Felicidades!</Text>
+
+            <View style={styles.welcomeBox}>
+                <Text style={styles.welcomeText}>Bienvenido(a) a</Text>
+                <Text style={styles.brandName}>Ruta Segura Perú</Text>
+                <View style={styles.guideDivider} />
+                <Text style={styles.guideName}>{guideData.full_name || 'Guía'}</Text>
+            </View>
+
+            <Text style={styles.approvalMessage}>
+                Tu cuenta ha sido verificada y aprobada.{'\n'}
+                Ya puedes comenzar a ofrecer tus servicios como guía turístico oficial.
             </Text>
 
             <View style={styles.verifiedBadge}>
                 <Ionicons name="shield-checkmark" size={24} color="#4CAF50" />
-                <Text style={styles.verifiedText}>Guía Verificado</Text>
+                <Text style={styles.verifiedText}>Guía Verificado ✓</Text>
+            </View>
+
+            {/* Benefits Section */}
+            <View style={styles.benefitsBox}>
+                <View style={styles.benefitItem}>
+                    <Ionicons name="navigate" size={20} color="#1152d4" />
+                    <Text style={styles.benefitText}>Tracking GPS en tiempo real</Text>
+                </View>
+                <View style={styles.benefitItem}>
+                    <Ionicons name="language" size={20} color="#1152d4" />
+                    <Text style={styles.benefitText}>Traductor con IA incluido</Text>
+                </View>
+                <View style={styles.benefitItem}>
+                    <Ionicons name="shield" size={20} color="#1152d4" />
+                    <Text style={styles.benefitText}>Sistema SOS de emergencia</Text>
+                </View>
             </View>
 
             <TouchableOpacity
-                style={styles.primaryButton}
+                style={styles.dashboardButton}
                 onPress={() => router.replace('/(guide)/(tabs)/dashboard' as any)}
             >
-                <Text style={styles.primaryButtonText}>Ir al Dashboard</Text>
+                <Text style={styles.primaryButtonText}>🚀 Comenzar Ahora</Text>
+                <Ionicons name="arrow-forward" size={20} color="#FFF" />
             </TouchableOpacity>
         </View>
     );
@@ -758,4 +825,20 @@ const styles = StyleSheet.create({
     reasonBox: { backgroundColor: 'rgba(255,82,82,0.15)', padding: 20, borderRadius: 12, marginBottom: 32, width: '100%' },
     reasonLabel: { color: '#FF5252', fontSize: 14, fontWeight: '600', marginBottom: 8 },
     reasonText: { color: '#FFF', fontSize: 14, lineHeight: 22 },
+
+    // Enhanced Welcome Screen Styles
+    celebrationContainer: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 40 },
+    confettiEmoji: { fontSize: 48, opacity: 0.8 },
+    confettiEmoji2: { fontSize: 48, opacity: 0.8 },
+    celebrationTitle: { fontSize: 36, fontWeight: 'bold', color: '#4CAF50', marginBottom: 20, textShadowColor: 'rgba(76,175,80,0.3)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 10 },
+    welcomeBox: { backgroundColor: 'rgba(17,82,212,0.15)', borderRadius: 20, padding: 24, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: 'rgba(17,82,212,0.3)' },
+    welcomeText: { fontSize: 16, color: '#8E8E93' },
+    brandName: { fontSize: 28, fontWeight: 'bold', color: '#1152d4', marginTop: 4 },
+    guideDivider: { width: 60, height: 2, backgroundColor: 'rgba(17,82,212,0.5)', marginVertical: 16, borderRadius: 1 },
+    guideName: { fontSize: 22, fontWeight: '700', color: '#FFF', textTransform: 'capitalize' },
+    approvalMessage: { fontSize: 14, color: '#8E8E93', textAlign: 'center', marginBottom: 20, lineHeight: 22, paddingHorizontal: 20 },
+    benefitsBox: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, padding: 16, marginBottom: 24, width: '100%' },
+    benefitItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
+    benefitText: { fontSize: 14, color: '#FFF', flex: 1 },
+    dashboardButton: { backgroundColor: '#1152d4', borderRadius: 16, height: 60, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10, width: '100%', shadowColor: '#1152d4', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 },
 });

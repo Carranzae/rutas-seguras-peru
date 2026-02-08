@@ -17,18 +17,41 @@ class FirebaseNotificationProvider(NotificationProvider):
         self._app = None
     
     def _initialize(self):
-        """Lazy initialization of Firebase Admin SDK."""
+        """Lazy initialization of Firebase Admin SDK.
+        
+        Supports two modes:
+        1. JSON string from env var (for Railway/cloud): FIREBASE_CREDENTIALS_JSON
+        2. File path (for local dev): FIREBASE_CREDENTIALS_PATH
+        """
         if self._initialized:
             return
         
         try:
+            import json
             import firebase_admin
             from firebase_admin import credentials
             
-            cred = credentials.Certificate(settings.firebase_credentials_path)
-            self._app = firebase_admin.initialize_app(cred)
-            self._initialized = True
-            logger.info("Firebase Admin SDK initialized")
+            cred = None
+            
+            # Try JSON string first (for cloud deployments like Railway)
+            if settings.firebase_credentials_json:
+                cred_dict = json.loads(settings.firebase_credentials_json)
+                cred = credentials.Certificate(cred_dict)
+                logger.info("Firebase using credentials from environment variable")
+            # Fall back to file path (for local development)
+            elif settings.firebase_credentials_path:
+                import os
+                if os.path.exists(settings.firebase_credentials_path):
+                    cred = credentials.Certificate(settings.firebase_credentials_path)
+                    logger.info("Firebase using credentials from file")
+            
+            if cred:
+                self._app = firebase_admin.initialize_app(cred)
+                self._initialized = True
+                logger.info("Firebase Admin SDK initialized successfully")
+            else:
+                logger.warning("No Firebase credentials found (JSON or file)")
+                
         except Exception as e:
             logger.warning(f"Firebase initialization failed: {e}")
     

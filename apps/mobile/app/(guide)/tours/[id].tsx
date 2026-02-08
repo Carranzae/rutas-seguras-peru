@@ -6,6 +6,7 @@ import { Colors, Shadows, Spacing } from '@/src/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { httpClient } from '@/src/core/api';
 import {
     ActivityIndicator,
     Alert,
@@ -31,39 +32,40 @@ export default function GuideTourDetailScreen() {
 
     const loadTourDetails = async () => {
         try {
-            // Mock fetching tour details
-            // In real app: const response = await api.get(`/tours/${id}`);
-            await new Promise(r => setTimeout(r, 800));
+            const response = await httpClient.get<any>(`/tours/${id}`);
+            if (response.data) {
+                const t = response.data;
+                setTour({
+                    id: t.id,
+                    name: t.name || 'Tour',
+                    date: t.created_at ? new Date(t.created_at).toLocaleDateString() : 'N/A',
+                    time: '05:30 AM',
+                    meeting_point: t.meeting_point || 'Por confirmar',
+                    guests_count: t.max_participants || 0,
+                    status: t.status || 'assigned',
+                    tourists: [],
+                    itinerary: [
+                        { time: '05:30', activity: 'Recojo en Hotel' },
+                        { time: '06:30', activity: 'Llegada a estación de tren' },
+                        { time: '08:00', activity: 'Inicio de guiado en ciudadela' },
+                        { time: '12:00', activity: 'Fin del tour' }
+                    ]
+                });
 
-            setTour({
-                id: id,
-                name: 'Machu Picchu Sunrise Experience',
-                date: '25 Enero, 2026',
-                time: '05:30 AM',
-                meeting_point: 'Hotel Taypikala Lobby',
-                guests_count: 2,
-                status: 'assigned', // assigned, confirmed, in_progress, completed
-                tourists: [
-                    {
-                        name: 'Juan Pérez',
-                        phone: '+51 987 654 321',
-                        email: 'juan@example.com',
-                        image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=400',
-                        notes: 'Vegetariano, prefiere asiento ventana'
-                    },
-                    {
-                        name: 'Maria Garcia',
-                        phone: '+51 999 888 777',
-                        notes: 'Primera vez en altura'
-                    }
-                ],
-                itinerary: [
-                    { time: '05:30', activity: 'Recojo en Hotel' },
-                    { time: '06:30', activity: 'Llegada a estación de tren' },
-                    { time: '08:00', activity: 'Inicio de guiado en ciudadela' },
-                    { time: '12:00', activity: 'Fin del tour' }
-                ]
-            });
+                // Load bookings for this tour to get tourists
+                const bookingsResp = await httpClient.get<{ items: any[] }>(`/tours/${id}/bookings`);
+                if (bookingsResp.data?.items) {
+                    const tourists = bookingsResp.data.items.map((b: any) => ({
+                        name: b.contact_name || b.user_name || 'Tourist',
+                        phone: b.contact_phone || '',
+                        email: b.contact_email,
+                        notes: b.special_requests || 'Sin notas especiales',
+                    }));
+                    setTour((prev: any) => prev ? { ...prev, tourists, guests_count: tourists.length } : prev);
+                }
+            } else {
+                throw new Error('Tour not found');
+            }
         } catch (error) {
             console.error('Error loading tour:', error);
             Alert.alert('Error', 'No se pudo cargar la información del tour');

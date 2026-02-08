@@ -1,19 +1,48 @@
 // Ruta Segura Perú - Trip History Screen
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { router } from 'expo-router';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function TripHistory() {
-    const trips = [
-        { id: '1', tour: 'Machu Picchu Explorer', date: 'Jan 15, 2025', guide: 'Maria Santos', status: 'completed', rating: 5 },
-        { id: '2', tour: 'Sacred Valley Tour', date: 'Jan 10, 2025', guide: 'Carlos R.', status: 'completed', rating: 4 },
-        { id: '3', tour: 'Lima Food Tour', date: 'Jan 5, 2025', guide: 'Ana P.', status: 'completed', rating: 5 },
-        { id: '4', tour: 'Nazca Lines Flight', date: 'Dec 28, 2024', guide: 'Pedro L.', status: 'cancelled', rating: null },
-    ];
+interface TripItem {
+    id: string;
+    tour: string;
+    date: string;
+    guide: string;
+    status: string;
+    rating: number | null;
+}
 
-    const stats = { total: 4, hours: 32, countries: 1 };
+export default function TripHistory() {
+    const [trips, setTrips] = useState<TripItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({ total: 0, hours: 0, countries: 1 });
+
+    const loadHistory = useCallback(async () => {
+        try {
+            const response = await httpClient.get<{ items: any[] }>('/bookings');
+            if (response.data?.items) {
+                const mapped: TripItem[] = response.data.items.map((b: any) => ({
+                    id: b.id,
+                    tour: b.tour_name || 'Tour',
+                    date: b.scheduled_date ? new Date(b.scheduled_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+                    guide: b.guide_name || 'Guide',
+                    status: b.status || 'completed',
+                    rating: b.rating || null,
+                }));
+                setTrips(mapped);
+                setStats({ total: mapped.length, hours: mapped.length * 6, countries: 1 });
+            }
+        } catch (error) {
+            console.error('Error loading history:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { loadHistory(); }, [loadHistory]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -23,6 +52,11 @@ export default function TripHistory() {
                 <View style={{ width: 40 }} />
             </View>
 
+            {loading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={Colors.primary} />
+                </View>
+            ) : null}
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
                 {/* Stats */}
                 <View style={styles.statsCard}>

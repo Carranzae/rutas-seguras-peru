@@ -4989,3 +4989,46 @@ sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[Tour(tours)]' has no property
 2026-02-05 21:50:10 | INFO     | app.middleware.logging:dispatch:32 - [15ffc5c0] GET /docs - 200 (9.71ms)
 2026-02-05 21:50:11 | INFO     | app.middleware.logging:dispatch:20 - [d0842f4b] GET /openapi.json - Started
 2026-02-05 21:50:11 | INFO     | app.middleware.logging:dispatch:32 - [d0842f4b] GET /openapi.json - 200 (20.22ms)
+2026-02-07 18:01:47 | INFO     | app.main:setup_logging:72 - Logging configured: INFO
+2026-02-07 18:01:47 | INFO     | app.main:lifespan:79 - Starting RutaSeguraPeru (development)
+2026-02-07 18:01:49 | INFO     | app.services.redis_service:connect:53 - Redis connected successfully: redis://localhost:6379/0
+2026-02-07 18:01:49 | INFO     | app.main:lifespan:83 - Redis connected
+2026-02-07 18:01:50 | INFO     | app.main:lifespan:87 - Database tables initialized
+2026-02-07 18:11:27 | INFO     | app.middleware.logging:dispatch:20 - [f80d6ef2] GET /health - Started
+2026-02-07 18:11:27 | INFO     | app.middleware.logging:dispatch:32 - [f80d6ef2] GET /health - 200 (224.46ms)
+2026-02-07 18:11:28 | INFO     | app.middleware.logging:dispatch:20 - [6b005841] GET /favicon.ico - Started
+2026-02-07 18:11:28 | WARNING  | app.middleware.logging:dispatch:32 - [6b005841] GET /favicon.ico - 404 (19.96ms)
+2026-02-07 18:12:05 | INFO     | app.middleware.logging:dispatch:20 - [b81df625] GET /health - Started
+2026-02-07 18:12:06 | INFO     | app.middleware.logging:dispatch:32 - [b81df625] GET /health - 200 (97.66ms)
+2026-02-07 18:17:34 | INFO     | app.middleware.logging:dispatch:20 - [a9c4a131] GET /docs - Started
+2026-02-07 18:17:34 | INFO     | app.middleware.logging:dispatch:32 - [a9c4a131] GET /docs - 200 (706.99ms)
+2026-02-07 18:17:35 | INFO     | app.middleware.logging:dispatch:20 - [2e32e722] GET /openapi.json - Started
+2026-02-07 18:17:37 | INFO     | app.middleware.logging:dispatch:32 - [2e32e722] GET /openapi.json - 200 (1581.88ms)
+2026-02-07 18:18:23 | INFO     | app.middleware.logging:dispatch:20 - [4f6e7913] GET / - Started
+2026-02-07 18:18:23 | INFO     | app.middleware.logging:dispatch:32 - [4f6e7913] GET / - 200 (210.25ms)
+2026-02-07 18:18:42 | INFO     | app.middleware.logging:dispatch:20 - [0eeccf5a] GET /docs - Started
+2026-02-07 18:18:42 | INFO     | app.middleware.logging:dispatch:32 - [0eeccf5a] GET /docs - 200 (16.29ms)
+2026-02-07 18:18:42 | INFO     | app.middleware.logging:dispatch:20 - [43c26751] GET /openapi.json - Started
+2026-02-07 18:18:42 | INFO     | app.middleware.logging:dispatch:32 - [43c26751] GET /openapi.json - 200 (118.1ms)
+2026-02-07 18:19:41 | INFO     | app.middleware.logging:dispatch:20 - [55122cb1] GET /doc - Started
+2026-02-07 18:19:41 | WARNING  | app.middleware.logging:dispatch:32 - [55122cb1] GET /doc - 404 (250.91ms)
+2026-02-07 18:20:03 | INFO     | app.middleware.logging:dispatch:20 - [1c31f15a] GET /docs - Started
+2026-02-07 18:20:03 | INFO     | app.middleware.logging:dispatch:32 - [1c31f15a] GET /docs - 200 (176.94ms)
+2026-02-07 18:20:05 | INFO     | app.middleware.logging:dispatch:20 - [7c5f8958] GET /openapi.json - Started
+2026-02-07 18:20:07 | INFO     | app.middleware.logging:dispatch:32 - [7c5f8958] GET /openapi.json - 200 (1437.66ms)
+2026-02-07 18:26:01 | INFO     | app.services.redis_service:disconnect:67 - Redis disconnected
+2026-02-07 18:26:03 | INFO     | app.main:lifespan:94 - Application shutdown complete
+2026-02-07 18:32:24 | INFO     | app.main:setup_logging:71 - Logging configured: INFO
+2026-02-07 18:32:24 | INFO     | app.main:lifespan:78 - Starting RutaSeguraPeru (development)
+2026-02-07 18:32:27 | INFO     | app.services.redis_service:connect:53 - Redis connected successfully: redis://localhost:6379/0
+2026-02-07 18:32:27 | INFO     | app.main:lifespan:82 - Redis connected
+2026-02-07 18:32:30 | INFO     | app.main:lifespan:86 - Database tables initialized
+2026-02-07 18:41:31 | INFO     | app.middleware.logging:dispatch:20 - [680fb101] GET /docs - Started
+2026-02-07 18:41:31 | INFO     | app.middleware.logging:dispatch:32 - [680fb101] GET /docs - 200 (120.75ms)
+2026-02-07 18:41:32 | INFO     | app.middleware.logging:dispatch:20 - [e3e7f1b2] GET /openapi.json - Started
+2026-02-07 18:41:35 | INFO     | app.middleware.logging:dispatch:32 - [e3e7f1b2] GET /openapi.json - 200 (2942.84ms)
+2026-02-08 15:05:43 | INFO     | app.main:setup_logging:71 - Logging configured: INFO
+2026-02-08 15:05:43 | INFO     | app.main:lifespan:78 - Starting RutaSeguraPeru (development)
+2026-02-08 15:05:45 | INFO     | app.services.redis_service:connect:53 - Redis connected successfully: redis://localhost:6379/0
+2026-02-08 15:05:45 | INFO     | app.main:lifespan:82 - Redis connected
+2026-02-08 15:05:45 | INFO     | app.main:lifespan:86 - Database tables initialized

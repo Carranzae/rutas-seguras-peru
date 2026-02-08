@@ -3,13 +3,14 @@
  * Multi-language support for tourist app (default: English)
  */
 
-export type SupportedLanguage = 'en' | 'es' | 'fr' | 'de' | 'pt' | 'it' | 'zh' | 'ja' | 'ko' | 'ru';
+export type SupportedLanguage = 'en' | 'es' | 'fr' | 'de' | 'pt' | 'it' | 'zh' | 'ja' | 'ko' | 'ru' | 'ar';
 
 export interface LanguageInfo {
     code: SupportedLanguage;
     name: string;
     nativeName: string;
     flag: string;
+    rtl?: boolean; // Right-to-left for Arabic
 }
 
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
@@ -23,6 +24,7 @@ export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
     { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
     { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
     { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+    { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', rtl: true },
 ];
 
 // Translation keys for the entire app
@@ -64,6 +66,7 @@ export interface Translations {
         confirmPassword: string;
         fullName: string;
         phone: string;
+        phoneOptional: string;
         forgotPassword: string;
         noAccount: string;
         haveAccount: string;
@@ -71,6 +74,19 @@ export interface Translations {
         loginButton: string;
         registerButton: string;
         orContinueWith: string;
+        joinApp: string;
+        howUseApp: string;
+        tourist: string;
+        guide: string;
+        guideNote: string;
+        minChars: string;
+        accountCreated: string;
+        accountCreatedMessage: string;
+        required: string;
+        invalidEmail: string;
+        passwordRequired: string;
+        passwordMinLength: string;
+        passwordsNotMatch: string;
     };
     // Home/Explore
     home: {
@@ -104,13 +120,27 @@ export interface Translations {
     // Safety
     safety: {
         title: string;
+        subtitle: string;
         sos: string;
         slideSOS: string;
         emergencyActive: string;
         shareLocation: string;
+        locationShared: string;
+        locationSharedMessage: string;
         trustedContacts: string;
         safetyTips: string;
         emergencyNumbers: string;
+        yourGuide: string;
+        verifiedGuide: string;
+        sosError: string;
+        locationError: string;
+        // Safety tips
+        tipPhone: string;
+        tipValuables: string;
+        tipTaxi: string;
+        tipItinerary: string;
+        tipNight: string;
+        tipWater: string;
     };
     // Profile
     profile: {
@@ -122,7 +152,13 @@ export interface Translations {
         notifications: string;
         help: string;
         logout: string;
+        logoutConfirm: string;
         editProfile: string;
+        tours: string;
+        pending: string;
+        confirmed: string;
+        completed: string;
+        cancelled: string;
     };
     // Reviews
     reviews: {
@@ -188,6 +224,7 @@ const en: Translations = {
         confirmPassword: 'Confirm Password',
         fullName: 'Full Name',
         phone: 'Phone Number',
+        phoneOptional: 'Phone (optional)',
         forgotPassword: 'Forgot Password?',
         noAccount: "Don't have an account?",
         haveAccount: 'Already have an account?',
@@ -195,6 +232,19 @@ const en: Translations = {
         loginButton: 'Sign In',
         registerButton: 'Sign Up',
         orContinueWith: 'or continue with',
+        joinApp: 'Join Ruta Segura Perú',
+        howUseApp: 'How will you use the app?',
+        tourist: 'Tourist',
+        guide: 'Guide',
+        guideNote: '💡 As a guide, you will need to verify your DIRCETUR license',
+        minChars: 'Minimum 8 characters',
+        accountCreated: 'Account Created!',
+        accountCreatedMessage: 'Your account has been created successfully. Please sign in.',
+        required: 'is required',
+        invalidEmail: 'Invalid email',
+        passwordRequired: 'Password is required',
+        passwordMinLength: 'Password must be at least 8 characters',
+        passwordsNotMatch: 'Passwords do not match',
     },
     home: {
         greeting: 'Hello',
@@ -225,13 +275,26 @@ const en: Translations = {
     },
     safety: {
         title: 'Safety',
+        subtitle: 'Your safety is our priority',
         sos: 'SOS',
         slideSOS: 'Slide for Emergency',
         emergencyActive: 'Emergency Active',
-        shareLocation: 'Sharing location in real-time',
+        shareLocation: 'Share Location',
+        locationShared: 'Location shared',
+        locationSharedMessage: 'Your location is being shared in real-time',
         trustedContacts: 'Trusted Contacts',
         safetyTips: 'Safety Tips',
         emergencyNumbers: 'Emergency Numbers',
+        yourGuide: 'Your Assigned Guide',
+        verifiedGuide: 'Verified Guide',
+        sosError: 'Failed to activate SOS',
+        locationError: 'Could not share location',
+        tipPhone: 'Keep your phone charged',
+        tipValuables: "Don't display valuables",
+        tipTaxi: 'Use official taxis only',
+        tipItinerary: 'Share your itinerary',
+        tipNight: 'Avoid dark areas at night',
+        tipWater: 'Drink bottled water only',
     },
     profile: {
         title: 'Profile',
@@ -242,7 +305,13 @@ const en: Translations = {
         notifications: 'Notifications',
         help: 'Help & Support',
         logout: 'Log Out',
+        logoutConfirm: 'Are you sure you want to log out?',
         editProfile: 'Edit Profile',
+        tours: 'Tours',
+        pending: 'Pending',
+        confirmed: 'Confirmed',
+        completed: 'Completed',
+        cancelled: 'Cancelled',
     },
     reviews: {
         writeReview: 'Write a Review',
@@ -305,6 +374,7 @@ const es: Translations = {
         confirmPassword: 'Confirmar contraseña',
         fullName: 'Nombre completo',
         phone: 'Teléfono',
+        phoneOptional: 'Teléfono (opcional)',
         forgotPassword: '¿Olvidaste tu contraseña?',
         noAccount: '¿No tienes cuenta?',
         haveAccount: '¿Ya tienes cuenta?',
@@ -312,6 +382,19 @@ const es: Translations = {
         loginButton: 'Ingresar',
         registerButton: 'Registrarse',
         orContinueWith: 'o continúa con',
+        joinApp: 'Únete a Ruta Segura Perú',
+        howUseApp: '¿Cómo usarás la app?',
+        tourist: 'Turista',
+        guide: 'Guía',
+        guideNote: '💡 Como guía, necesitarás verificar tu carnet DIRCETUR',
+        minChars: 'Mínimo 8 caracteres',
+        accountCreated: '¡Cuenta Creada!',
+        accountCreatedMessage: 'Tu cuenta ha sido creada exitosamente. Por favor inicia sesión.',
+        required: 'es requerido',
+        invalidEmail: 'Correo inválido',
+        passwordRequired: 'La contraseña es requerida',
+        passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
+        passwordsNotMatch: 'Las contraseñas no coinciden',
     },
     home: {
         greeting: 'Hola',
@@ -342,13 +425,26 @@ const es: Translations = {
     },
     safety: {
         title: 'Seguridad',
+        subtitle: 'Tu seguridad es nuestra prioridad',
         sos: 'SOS',
         slideSOS: 'Desliza para Emergencia',
         emergencyActive: 'Emergencia Activa',
-        shareLocation: 'Compartiendo ubicación en tiempo real',
+        shareLocation: 'Compartir Ubicación',
+        locationShared: 'Ubicación compartida',
+        locationSharedMessage: 'Tu ubicación se está compartiendo en tiempo real',
         trustedContacts: 'Contactos de Confianza',
         safetyTips: 'Consejos de Seguridad',
         emergencyNumbers: 'Números de Emergencia',
+        yourGuide: 'Tu Guía Asignado',
+        verifiedGuide: 'Guía Verificado',
+        sosError: 'Error al activar SOS',
+        locationError: 'No se pudo compartir ubicación',
+        tipPhone: 'Mantén tu teléfono cargado',
+        tipValuables: 'No muestres objetos de valor',
+        tipTaxi: 'Usa solo taxis oficiales',
+        tipItinerary: 'Comparte tu itinerario',
+        tipNight: 'Evita zonas oscuras de noche',
+        tipWater: 'Bebe solo agua embotellada',
     },
     profile: {
         title: 'Perfil',
@@ -359,7 +455,13 @@ const es: Translations = {
         notifications: 'Notificaciones',
         help: 'Ayuda y Soporte',
         logout: 'Cerrar Sesión',
+        logoutConfirm: '¿Estás seguro que deseas cerrar sesión?',
         editProfile: 'Editar Perfil',
+        tours: 'Tours',
+        pending: 'Pendiente',
+        confirmed: 'Confirmado',
+        completed: 'Completado',
+        cancelled: 'Cancelado',
     },
     reviews: {
         writeReview: 'Escribir Reseña',
@@ -386,22 +488,26 @@ const es: Translations = {
     },
 };
 
+// Import complete translations for all languages
+import { ar, de, fr, it, ja, ko, pt, ru, zh } from './allTranslations';
+
 // All translations
 export const translations: Record<SupportedLanguage, Translations> = {
     en,
     es,
-    // For other languages, fallback to English for now
-    fr: { ...en },
-    de: { ...en },
-    pt: { ...en },
-    it: { ...en },
-    zh: { ...en },
-    ja: { ...en },
-    ko: { ...en },
-    ru: { ...en },
+    fr,
+    de,
+    pt,
+    it,
+    zh,
+    ja,
+    ko,
+    ru,
+    ar,
 };
 
 // Get translation for a specific language
 export function getTranslation(lang: SupportedLanguage): Translations {
     return translations[lang] || translations.en;
 }
+

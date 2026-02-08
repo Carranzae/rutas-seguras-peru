@@ -6,17 +6,20 @@ import { Platform } from 'react-native';
 
 // Determine base URL based on environment
 const getBaseUrl = (): string => {
-    if (!__DEV__) {
-        return 'https://api.rutaseguraperu.com';
-    }
+    // === DESARROLLO ===
+    // Cambia esta IP cuando cambies de red
+    const LOCAL_BACKEND_IP = '192.168.48.174';
 
-    // Development
+    // Para APK de producción real, descomenta esta línea:
+    // return 'https://api.rutaseguraperu.com';
+
+    // Para pruebas con backend local (APK o desarrollo):
     if (Platform.OS === 'web') {
         return 'http://localhost:8000';
     }
 
-    // Mobile development - use local network IP
-    return 'http://192.168.48.174:8000';
+    // Android/iOS - usa la IP de tu laptop
+    return `http://${LOCAL_BACKEND_IP}:8000`;
 };
 
 export const API_CONFIG = {

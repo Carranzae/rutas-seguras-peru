@@ -149,21 +149,21 @@ export default function EmergencyActiveScreen() {
             '¿Estás seguro de que quieres cancelar la alerta de emergencia?',
             [
                 { text: 'No', style: 'cancel' },
-                {
-                    text: 'Sí, Cancelar',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            if (emergencyId) {
-                                await emergencyService.cancelSOS(emergencyId);
-                            }
-                            Vibration.cancel();
-                            router.replace('/(tourist)/(tabs)/home');
-                        } catch (error) {
-                            console.error('Error resolving emergency:', error);
-                        }
-                    },
-                },
+                        {
+                            text: 'Sí, Cancelar',
+                            style: 'destructive',
+                            onPress: async () => {
+                                try {
+                                    if (emergencyId) {
+                                        await emergencyService.cancelSOS(emergencyId);
+                                    }
+                                    Vibration.cancel();
+                                    router.replace('/(tourist)/(tabs)/explore');
+                                } catch (error) {
+                                    console.error('Error resolving emergency:', error);
+                                }
+                            },
+                        },
             ]
         );
     };

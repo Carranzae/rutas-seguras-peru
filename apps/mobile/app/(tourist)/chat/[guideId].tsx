@@ -1,8 +1,9 @@
 // Ruta Segura Perú - Chat with Guide Screen
 import { Colors, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChatWithGuide() {
@@ -27,42 +28,26 @@ export default function ChatWithGuide() {
     };
 
     const handleTranslate = async () => {
-        // Translate the last message from the guide
         const lastGuideMessage = [...messages].reverse().find(m => m.sender === 'guide');
         if (!lastGuideMessage) return;
 
-        if (translatedTexts[lastGuideMessage.id]) {
-            // Toggle off? Or maybe translate all? Let's translate all untranslated guide messages
-            // For simple UX, let's allow translating specific messages or just the latest "context"
-        }
-
         setTranslating(true);
         try {
-            // In a real app, use a configured Axios instance
-            const API_URL = 'http://localhost:8000/api/v1';
-
-            const textToTranslate = lastGuideMessage.text;
-
-            const response = await fetch(`${API_URL}/ai/translate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: textToTranslate,
-                    target_language: "es", // Assuming tourist speaks Spanish based on context or profile
-                    source_language: "en"
-                })
+            const response = await httpClient.post<{ translated_text?: string }>('/ai/translate', {
+                text: lastGuideMessage.text,
+                target_language: 'es',
+                source_language: 'en',
             });
 
-            const data = await response.json();
-            if (data.translated_text) {
+            if (response.data?.translated_text) {
                 setTranslatedTexts(prev => ({
                     ...prev,
-                    [lastGuideMessage.id]: data.translated_text
+                    [lastGuideMessage.id]: response.data!.translated_text!,
                 }));
             }
         } catch (error) {
             console.error('Translation failed', error);
-            alert('Error translating message');
+            Alert.alert('Error', 'No se pudo traducir el mensaje');
         } finally {
             setTranslating(false);
         }

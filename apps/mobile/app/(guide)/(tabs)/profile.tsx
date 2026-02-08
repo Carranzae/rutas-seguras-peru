@@ -1,37 +1,94 @@
 // Ruta Segura Perú - Guide Profile Screen
 import { BorderRadius, Colors, Shadows, Spacing, Typography } from '@/src/constants/theme';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '@/src/features/auth';
+import { httpClient } from '@/src/core/api';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+interface GuideStats {
+    total_tours: number;
+    total_tourists: number;
+    rating: number;
+    years_active: number;
+}
+
 export default function GuideProfile() {
+    const { user, logout, isLoading } = useAuth();
+    const [stats, setStats] = useState<GuideStats>({ total_tours: 0, total_tourists: 0, rating: 0, years_active: 0 });
+    const [refreshing, setRefreshing] = useState(false);
+
+    const loadStats = useCallback(async () => {
+        try {
+            const response = await httpClient.get<GuideStats>('/guides/me/stats');
+            if (response.data) {
+                setStats(response.data);
+            }
+        } catch (error) {
+            console.log('Error loading guide stats:', error);
+        }
+    }, []);
+
+    useEffect(() => { loadStats(); }, [loadStats]);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadStats().finally(() => setRefreshing(false));
+    };
+
+    const handleLogout = () => {
+        Alert.alert('Cerrar Sesión', '¿Estás seguro que deseas salir?', [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+                text: 'Salir', style: 'destructive', onPress: async () => {
+                    try {
+                        await logout();
+                        router.replace('/');
+                    } catch (e) {
+                        console.error('Logout error:', e);
+                    }
+                }
+            },
+        ]);
+    };
+
+    const initials = user?.full_name
+        ? user.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+        : 'G';
+
     const menuItems = [
-        { id: 'verification', icon: '✓', title: 'Verification Status', subtitle: 'DIRCETUR verified', color: Colors.success },
-        { id: 'languages', icon: '🌐', title: 'Languages', subtitle: 'Spanish, English, Portuguese' },
+        { id: 'verification', icon: '✓', title: 'Verification Status', subtitle: user?.is_verified ? 'DIRCETUR verified' : 'Not verified', color: user?.is_verified ? Colors.success : Colors.warning },
+        { id: 'languages', icon: '🌐', title: 'Languages', subtitle: user?.language || 'Spanish' },
         { id: 'specialties', icon: '🎯', title: 'Specialties', subtitle: 'History, Culture, Food' },
         { id: 'earnings', icon: '💰', title: 'Earnings', subtitle: 'View your income' },
-        { id: 'reviews', icon: '⭐', title: 'Reviews', subtitle: '48 reviews' },
+        { id: 'reviews', icon: '⭐', title: 'Reviews', subtitle: `${stats.rating.toFixed(1)} rating` },
         { id: 'settings', icon: '⚙️', title: 'Settings', subtitle: '' },
     ];
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            >
                 <View style={styles.header}>
-                    <View style={styles.avatar}><Text style={styles.avatarText}>AR</Text></View>
-                    <Text style={styles.name}>Alex Rivera</Text>
-                    <Text style={styles.role}>Professional Tour Guide</Text>
+                    <View style={[styles.avatar, user?.is_verified && { borderWidth: 3, borderColor: Colors.success }]}>
+                        <Text style={styles.avatarText}>{initials}</Text>
+                    </View>
+                    <Text style={styles.name}>{user?.full_name || 'Guide'}</Text>
+                    <Text style={styles.role}>{user?.email || 'Professional Tour Guide'}</Text>
                     <View style={styles.ratingBadge}>
-                        <Text style={styles.ratingText}>⭐ 4.9 • 156 tours</Text>
+                        <Text style={styles.ratingText}>⭐ {stats.rating.toFixed(1)} • {stats.total_tours} tours</Text>
                     </View>
                 </View>
 
                 <View style={styles.statsRow}>
-                    <View style={styles.statItem}><Text style={styles.statValue}>156</Text><Text style={styles.statLabel}>Tours</Text></View>
+                    <View style={styles.statItem}><Text style={styles.statValue}>{stats.total_tours}</Text><Text style={styles.statLabel}>Tours</Text></View>
                     <View style={styles.statDivider} />
-                    <View style={styles.statItem}><Text style={styles.statValue}>1.2k</Text><Text style={styles.statLabel}>Tourists</Text></View>
+                    <View style={styles.statItem}><Text style={styles.statValue}>{stats.total_tourists}</Text><Text style={styles.statLabel}>Tourists</Text></View>
                     <View style={styles.statDivider} />
-                    <View style={styles.statItem}><Text style={styles.statValue}>3</Text><Text style={styles.statLabel}>Years</Text></View>
+                    <View style={styles.statItem}><Text style={styles.statValue}>{stats.years_active}</Text><Text style={styles.statLabel}>Years</Text></View>
                 </View>
 
                 <View style={styles.menuSection}>
@@ -42,14 +99,16 @@ export default function GuideProfile() {
                             </View>
                             <View style={styles.menuContent}>
                                 <Text style={styles.menuTitle}>{item.title}</Text>
-                                {item.subtitle && <Text style={styles.menuSubtitle}>{item.subtitle}</Text>}
+                                {item.subtitle ? <Text style={styles.menuSubtitle}>{item.subtitle}</Text> : null}
                             </View>
                             <Text style={styles.chevron}>›</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <TouchableOpacity style={styles.logoutButton}><Text style={styles.logoutText}>Log Out</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={isLoading}>
+                    {isLoading ? <ActivityIndicator color={Colors.danger} /> : <Text style={styles.logoutText}>Log Out</Text>}
+                </TouchableOpacity>
                 <View style={{ height: 100 }} />
             </ScrollView>
         </SafeAreaView>

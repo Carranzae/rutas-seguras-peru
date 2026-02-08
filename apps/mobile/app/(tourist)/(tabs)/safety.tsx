@@ -1,6 +1,6 @@
 /**
  * Ruta Segura Perú - Tourist Safety Screen
- * Emergency features, trusted contacts, safety tips
+ * Emergency features, trusted contacts, safety tips - with full i18n
  */
 import { SOSButton } from '@/src/components/common';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
@@ -36,7 +36,7 @@ const PERU_EMERGENCY_CONTACTS: EmergencyContact[] = [
 ];
 
 export default function SafetyScreen() {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const [isSharing, setIsSharing] = useState(false);
 
     const handleSOS = async () => {
@@ -54,7 +54,7 @@ export default function SafetyScreen() {
             });
         } catch (error) {
             console.error('SOS error:', error);
-            Alert.alert('Error', language === 'es' ? 'Error al activar SOS' : 'Failed to activate SOS');
+            Alert.alert(t.common.error, t.safety.sosError);
         }
     };
 
@@ -71,31 +71,22 @@ export default function SafetyScreen() {
                 intervalMs: 10000,
             });
             Alert.alert(
-                '📍 ' + (language === 'es' ? 'Ubicación compartida' : 'Location shared'),
-                language === 'es'
-                    ? 'Tu ubicación se está compartiendo en tiempo real'
-                    : 'Your location is being shared in real-time'
+                `📍 ${t.safety.locationShared}`,
+                t.safety.locationSharedMessage
             );
         } catch (error) {
             setIsSharing(false);
-            Alert.alert('Error', language === 'es' ? 'No se pudo compartir ubicación' : 'Could not share location');
+            Alert.alert(t.common.error, t.safety.locationError);
         }
     };
 
-    const safetyTips = language === 'es' ? [
-        { icon: '📱', text: 'Mantén tu teléfono cargado' },
-        { icon: '💰', text: 'No muestres objetos de valor' },
-        { icon: '🚕', text: 'Usa solo taxis oficiales' },
-        { icon: '🗺️', text: 'Comparte tu itinerario' },
-        { icon: '🌙', text: 'Evita zonas oscuras de noche' },
-        { icon: '💧', text: 'Bebe solo agua embotellada' },
-    ] : [
-        { icon: '📱', text: 'Keep your phone charged' },
-        { icon: '💰', text: 'Don\'t display valuables' },
-        { icon: '🚕', text: 'Use official taxis only' },
-        { icon: '🗺️', text: 'Share your itinerary' },
-        { icon: '🌙', text: 'Avoid dark areas at night' },
-        { icon: '💧', text: 'Drink bottled water only' },
+    const safetyTips = [
+        { icon: '📱', text: t.safety.tipPhone },
+        { icon: '💰', text: t.safety.tipValuables },
+        { icon: '🚕', text: t.safety.tipTaxi },
+        { icon: '🗺️', text: t.safety.tipItinerary },
+        { icon: '🌙', text: t.safety.tipNight },
+        { icon: '💧', text: t.safety.tipWater },
     ];
 
     return (
@@ -104,12 +95,7 @@ export default function SafetyScreen() {
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.title}>{t.safety.title}</Text>
-                    <Text style={styles.subtitle}>
-                        {language === 'es'
-                            ? 'Tu seguridad es nuestra prioridad'
-                            : 'Your safety is our priority'
-                        }
-                    </Text>
+                    <Text style={styles.subtitle}>{t.safety.subtitle}</Text>
                 </View>
 
                 {/* Quick Actions */}
@@ -177,9 +163,7 @@ export default function SafetyScreen() {
 
                 {/* Your Guide Info (if on tour) */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>
-                        {language === 'es' ? 'Tu Guía Asignado' : 'Your Assigned Guide'}
-                    </Text>
+                    <Text style={styles.sectionTitle}>{t.safety.yourGuide}</Text>
                     <View style={styles.guideCard}>
                         <View style={styles.guideAvatar}>
                             <Text style={styles.guideAvatarText}>C</Text>
@@ -189,9 +173,7 @@ export default function SafetyScreen() {
                         </View>
                         <View style={styles.guideInfo}>
                             <Text style={styles.guideName}>Carlos Quispe</Text>
-                            <Text style={styles.guideStatus}>
-                                {language === 'es' ? '✅ Guía Verificado' : '✅ Verified Guide'}
-                            </Text>
+                            <Text style={styles.guideStatus}>✅ {t.safety.verifiedGuide}</Text>
                         </View>
                         <TouchableOpacity
                             style={styles.callGuideButton}

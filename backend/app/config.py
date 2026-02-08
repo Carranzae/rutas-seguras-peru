@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     debug: bool = True
     api_v1_prefix: str = "/api/v1"
     
-    # Server
+    # Server (PORT is provided by Railway automatically)
     host: str = "0.0.0.0"
     port: int = 8000
     
@@ -49,8 +49,9 @@ class Settings(BaseSettings):
     # Redis
     redis_url: str = "redis://localhost:6379/0"
     
-    # Firebase
+    # Firebase - supports both file path and JSON string (for Railway/cloud)
     firebase_credentials_path: str = "./firebase-credentials.json"
+    firebase_credentials_json: str = ""  # JSON string for cloud deployments
     
     # Vonage (SMS, WhatsApp, Voice)
     vonage_api_key: str = ""

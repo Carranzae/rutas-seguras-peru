@@ -117,10 +117,42 @@ export default function GuideTranslatorScreen() {
                     myLanguage,
                     partnerLanguage,
                 });
+            } else {
+                // Generate local session code for demo/offline mode
+                const localCode = generateSessionCode();
+                setSessionId(localCode);
+                await startSession({
+                    sessionId: localCode,
+                    userId: 'guide_' + Date.now(),
+                    userName: 'Guía',
+                    userType: 'guide',
+                    myLanguage,
+                    partnerLanguage,
+                });
             }
         } catch (error) {
-            console.error('Failed to create session:', error);
+            // Generate local session code for demo mode
+            const localCode = generateSessionCode();
+            setSessionId(localCode);
+            await startSession({
+                sessionId: localCode,
+                userId: 'guide_' + Date.now(),
+                userName: 'Guía',
+                userType: 'guide',
+                myLanguage,
+                partnerLanguage,
+            });
         }
+    };
+
+    // Generate random session code
+    const generateSessionCode = (): string => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            code += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return code;
     };
 
     // End session
@@ -277,6 +309,20 @@ export default function GuideTranslatorScreen() {
                     <Text style={styles.langButtonText}>{getPartnerLangConfig().name}</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Session Code Display - Share with tourists */}
+            {isSessionActive && sessionId && (
+                <View style={styles.sessionCodeBox}>
+                    <View style={styles.sessionCodeHeader}>
+                        <Ionicons name="qr-code-outline" size={20} color={Colors.primary} />
+                        <Text style={styles.sessionCodeLabel}>Código para turistas</Text>
+                    </View>
+                    <Text style={styles.sessionCodeValue}>{sessionId}</Text>
+                    <Text style={styles.sessionCodeHint}>
+                        Comparte este código con tus turistas para que se conecten
+                    </Text>
+                </View>
+            )}
 
             {/* Quick Translation Result */}
             {quickTranslation && (
@@ -435,4 +481,11 @@ const styles = StyleSheet.create({
     langName: { fontSize: 16, color: Colors.textPrimary },
     langPickerClose: { marginTop: 12, padding: 14, backgroundColor: '#f1f5f9', borderRadius: 12, alignItems: 'center' },
     langPickerCloseText: { fontSize: 16, color: Colors.textSecondary, fontWeight: '600' },
+
+    // Session Code Display Styles
+    sessionCodeBox: { backgroundColor: 'rgba(99, 102, 241, 0.1)', marginHorizontal: Spacing.md, marginVertical: Spacing.sm, padding: Spacing.md, borderRadius: 16, alignItems: 'center', borderWidth: 2, borderColor: Colors.primary, borderStyle: 'dashed' },
+    sessionCodeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+    sessionCodeLabel: { fontSize: 12, color: Colors.primary, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
+    sessionCodeValue: { fontSize: 32, fontWeight: 'bold', color: Colors.primary, letterSpacing: 8 },
+    sessionCodeHint: { fontSize: 11, color: Colors.textSecondary, marginTop: 8, textAlign: 'center' },
 });

@@ -1,5 +1,6 @@
 // Ruta Segura Perú - Safety Notifications Screen
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -15,21 +16,19 @@ export default function SafetyNotifications() {
 
     const loadNotifications = async () => {
         try {
-            // Using direct fetch for simplicity if api service not fully typed for this new endpoint
-            // Or use: const response = await api.get('/notifications');
-            // Assuming api service is available
-            const response = await fetch('http://localhost:8000/api/v1/notifications');
-            if (response.ok) {
-                const data = await response.json();
-                setNotifications(data);
+            const response = await httpClient.get<any[]>('/notifications');
+            if (response.data) {
+                setNotifications(response.data);
             } else {
-                // Fallback
                 setNotifications([
-                    { id: '1', type: 'alert', title: 'Sin conexión', message: 'No se pudieron cargar las notificaciones.', time: 'Ahora', unread: true },
+                    { id: '1', type: 'alert', title: 'Sin notificaciones', message: 'No hay notificaciones nuevas.', time: 'Ahora', unread: false },
                 ]);
             }
         } catch (e) {
-            console.error(e);
+            console.error('Error loading notifications:', e);
+            setNotifications([
+                { id: '1', type: 'alert', title: 'Sin conexión', message: 'No se pudieron cargar las notificaciones.', time: 'Ahora', unread: true },
+            ]);
         } finally {
             setLoading(false);
         }

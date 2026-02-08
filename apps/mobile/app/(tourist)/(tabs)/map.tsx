@@ -3,7 +3,7 @@
  * Interactive map with tour locations and guide tracking using react-native-maps
  */
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
-import { httpClient } from '@/src/core/api';
+import { API_CONFIG, httpClient } from '@/src/core/api';
 import { useLanguage } from '@/src/i18n';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -58,6 +58,58 @@ export default function MapScreen() {
 
     useEffect(() => {
         initializeMap();
+    }, []);
+
+    // Subscribe to guide location when tourist has active booking
+    useEffect(() => {
+        let locationSubscription: WebSocket | null = null;
+
+        const subscribeToGuideLocation = async () => {
+            try {
+                // Check if tourist has active booking
+                const response = await httpClient.get<{ booking?: { guide_id: string; guide_name: string } }>('/bookings/active');
+
+                if (response.data?.booking) {
+                    const { guide_id, guide_name } = response.data.booking;
+
+                    // Connect to WebSocket for guide location
+                    const wsUrl = `ws://${API_CONFIG.BASE_URL.replace('http://', '').replace('https://', '')}/api/v1/ws/tracking/${guide_id}`;
+                    locationSubscription = new WebSocket(wsUrl);
+
+                    locationSubscription.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            if (data.latitude && data.longitude) {
+                                setGuideLocation({
+                                    id: guide_id,
+                                    name: guide_name,
+                                    latitude: data.latitude,
+                                    longitude: data.longitude,
+                                    isOnTour: true,
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Error parsing guide location:', e);
+                        }
+                    };
+
+                    locationSubscription.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                    };
+                }
+            } catch (error) {
+                // Tourist doesn't have active booking, no guide to track
+                console.log('No active booking for guide tracking');
+            }
+        };
+
+        subscribeToGuideLocation();
+
+        return () => {
+            if (locationSubscription) {
+                locationSubscription.close();
+            }
+        };
     }, []);
 
     const initializeMap = async () => {

@@ -21,6 +21,12 @@ export default function GuideLayout() {
             <Stack.Screen name="verification/pending" options={{ presentation: 'card' }} />
             {/* Chat */}
             <Stack.Screen name="chat/[tourId]" options={{ presentation: 'card' }} />
+            {/* Live Tracking */}
+            <Stack.Screen name="live-tracking" options={{ presentation: 'fullScreenModal' }} />
+            {/* Guide Registration */}
+            <Stack.Screen name="register" options={{ presentation: 'card' }} />
+            {/* Tour Detail */}
+            <Stack.Screen name="tours/[id]" options={{ presentation: 'card' }} />
             {/* Auth */}
             <Stack.Screen name="auth/reset-biometric" options={{ presentation: 'fullScreenModal' }} />
         </Stack>

@@ -9,7 +9,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleShe
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const { login, isLoading, error: authError, clearError } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -18,11 +18,11 @@ export default function LoginScreen() {
 
     const handleLogin = async () => {
         if (!email.trim()) {
-            setError(language === 'es' ? 'Por favor ingresa tu correo' : 'Please enter your email');
+            setError(`${t.auth.email} ${t.auth.required}`);
             return;
         }
         if (!password.trim()) {
-            setError(language === 'es' ? 'Por favor ingresa tu contraseña' : 'Please enter your password');
+            setError(t.auth.passwordRequired);
             return;
         }
 

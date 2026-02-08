@@ -1,6 +1,7 @@
 // Ruta Segura Perú - Active Route Mode Screen
 import { SOSButton } from '@/src/components/common';
 import { Colors, Shadows, Spacing } from '@/src/constants/theme';
+import { httpClient } from '@/src/core/api';
 import { useEmergencyStore } from '@/src/features/emergency';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -23,28 +24,38 @@ export default function ActiveRouteMode() {
 
     const loadActiveTour = async () => {
         try {
-            // Get specific tour or active one
             const id = tour_id || 'current';
-            // In real app: const response = await api.get(`/tours/${id}/active`);
-            // Simulating API call for valid structure
+            const response = await httpClient.get<any>(`/tours/${id}`);
 
-            // Mock response structure that matches backend
-            const activeTour = {
-                id: '123',
-                name: 'Machu Picchu Amanecer',
-                tourists_count: 8,
-                current_stop: 'Puerta del Sol',
-                next_stop: 'Templo Principal',
-                status: 'in_progress',
-                participants: [
-                    { id: '1', name: 'Juan Perez', status: 'ok', avatar: 'J' },
-                    { id: '2', name: 'Maria Smith', status: 'ok', avatar: 'M' },
-                    { id: '3', name: 'Carlos Ruiz', status: 'warning', avatar: 'C' }
-                ]
-            };
+            if (response.data) {
+                const t = response.data;
+                const activeTour = {
+                    id: t.id || id,
+                    name: t.name || 'Tour en Curso',
+                    tourists_count: t.max_participants || 0,
+                    current_stop: t.meeting_point || 'En ruta',
+                    next_stop: 'Siguiente parada',
+                    status: t.status || 'in_progress',
+                    participants: [] as any[],
+                };
 
-            setTour(activeTour);
-            setTourists(activeTour.participants);
+                // Load bookings/participants
+                const bookingsResp = await httpClient.get<{ items: any[] }>(`/tours/${id}/bookings`);
+                if (bookingsResp.data?.items) {
+                    activeTour.participants = bookingsResp.data.items.map((b: any) => ({
+                        id: b.user_id || b.id,
+                        name: b.contact_name || b.user_name || 'Tourist',
+                        status: 'ok' as const,
+                        avatar: (b.contact_name || b.user_name || 'T')[0],
+                    }));
+                    activeTour.tourists_count = activeTour.participants.length;
+                }
+
+                setTour(activeTour);
+                setTourists(activeTour.participants);
+            } else {
+                throw new Error('Tour not found');
+            }
         } catch (error) {
             console.error('Error loading tour:', error);
             Alert.alert('Error', 'No se pudo cargar el tour activo');

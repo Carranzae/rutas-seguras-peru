@@ -1,6 +1,7 @@
-// Ruta Segura Perú - Register Screen
+// Ruta Segura Perú - Register Screen with i18n
 import { Colors, Spacing } from '@/src/constants/theme';
 import { useAuth } from '@/src/features/auth';
+import { useLanguage } from '@/src/i18n';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -19,6 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RegisterScreen() {
     const { register, isLoading } = useAuth();
+    const { t } = useLanguage();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -31,23 +33,23 @@ export default function RegisterScreen() {
         const newErrors: Record<string, string> = {};
 
         if (!name.trim()) {
-            newErrors.name = 'El nombre es requerido';
+            newErrors.name = `${t.auth.fullName} ${t.auth.required}`;
         }
 
         if (!email.trim()) {
-            newErrors.email = 'El correo es requerido';
+            newErrors.email = `${t.auth.email} ${t.auth.required}`;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            newErrors.email = 'Correo inválido';
+            newErrors.email = t.auth.invalidEmail;
         }
 
         if (!password) {
-            newErrors.password = 'La contraseña es requerida';
+            newErrors.password = t.auth.passwordRequired;
         } else if (password.length < 8) {
-            newErrors.password = 'La contraseña debe tener al menos 8 caracteres';
+            newErrors.password = t.auth.passwordMinLength;
         }
 
         if (password !== confirmPassword) {
-            newErrors.confirmPassword = 'Las contraseñas no coinciden';
+            newErrors.confirmPassword = t.auth.passwordsNotMatch;
         }
 
         setErrors(newErrors);
@@ -57,6 +59,21 @@ export default function RegisterScreen() {
     const handleRegister = async () => {
         if (!validate()) return;
 
+        // If registering as guide, redirect to multi-step registration
+        if (role === 'guide') {
+            router.push({
+                pathname: '/(guide)/register',
+                params: {
+                    name: name.trim(),
+                    email: email.trim().toLowerCase(),
+                    phone: phone.trim() || '',
+                    password: password,
+                }
+            });
+            return;
+        }
+
+        // Tourist registration - direct API call
         try {
             await register({
                 email: email.trim().toLowerCase(),
@@ -67,19 +84,19 @@ export default function RegisterScreen() {
             });
 
             Alert.alert(
-                '¡Cuenta Creada!',
-                'Tu cuenta ha sido creada exitosamente. Por favor inicia sesión.',
+                t.auth.accountCreated,
+                t.auth.accountCreatedMessage,
                 [
                     {
-                        text: 'Iniciar Sesión',
+                        text: t.auth.login,
                         onPress: () => router.replace('/(auth)/login'),
                     },
                 ]
             );
         } catch (error: unknown) {
             console.error('Registration error:', error);
-            const errorMessage = error instanceof Error ? error.message : 'No se pudo crear la cuenta.';
-            Alert.alert('Error', errorMessage);
+            const errorMessage = error instanceof Error ? error.message : t.common.error;
+            Alert.alert(t.common.error, errorMessage);
         }
     };
 
@@ -92,37 +109,37 @@ export default function RegisterScreen() {
                     </TouchableOpacity>
 
                     <View style={styles.header}>
-                        <Text style={styles.title}>Crear Cuenta</Text>
-                        <Text style={styles.subtitle}>Únete a Ruta Segura Perú</Text>
+                        <Text style={styles.title}>{t.auth.createAccount}</Text>
+                        <Text style={styles.subtitle}>{t.auth.joinApp}</Text>
                     </View>
 
                     {/* Role Selection */}
                     <View style={styles.roleContainer}>
-                        <Text style={styles.roleLabel}>¿Cómo usarás la app?</Text>
+                        <Text style={styles.roleLabel}>{t.auth.howUseApp}</Text>
                         <View style={styles.roleButtons}>
                             <TouchableOpacity
                                 style={[styles.roleButton, role === 'tourist' && styles.roleButtonActive]}
                                 onPress={() => setRole('tourist')}
                             >
                                 <Text style={styles.roleIcon}>🧳</Text>
-                                <Text style={[styles.roleText, role === 'tourist' && styles.roleTextActive]}>Turista</Text>
+                                <Text style={[styles.roleText, role === 'tourist' && styles.roleTextActive]}>{t.auth.tourist}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.roleButton, role === 'guide' && styles.roleButtonActive]}
                                 onPress={() => setRole('guide')}
                             >
                                 <Text style={styles.roleIcon}>🎯</Text>
-                                <Text style={[styles.roleText, role === 'guide' && styles.roleTextActive]}>Guía</Text>
+                                <Text style={[styles.roleText, role === 'guide' && styles.roleTextActive]}>{t.auth.guide}</Text>
                             </TouchableOpacity>
                         </View>
                         {role === 'guide' && (
-                            <Text style={styles.guideNote}>💡 Como guía, necesitarás verificar tu carnet DIRCETUR</Text>
+                            <Text style={styles.guideNote}>{t.auth.guideNote}</Text>
                         )}
                     </View>
 
                     <View style={styles.form}>
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Nombre completo *</Text>
+                            <Text style={styles.label}>{t.auth.fullName} *</Text>
                             <TextInput
                                 style={[styles.input, errors.name && styles.inputError]}
                                 placeholder="Juan Pérez"
@@ -135,7 +152,7 @@ export default function RegisterScreen() {
                         </View>
 
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Correo electrónico *</Text>
+                            <Text style={styles.label}>{t.auth.email} *</Text>
                             <TextInput
                                 style={[styles.input, errors.email && styles.inputError]}
                                 placeholder="tu@email.com"
@@ -150,7 +167,7 @@ export default function RegisterScreen() {
                         </View>
 
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Teléfono (opcional)</Text>
+                            <Text style={styles.label}>{t.auth.phoneOptional}</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="+51 999 999 999"
@@ -163,10 +180,10 @@ export default function RegisterScreen() {
                         </View>
 
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Contraseña *</Text>
+                            <Text style={styles.label}>{t.auth.password} *</Text>
                             <TextInput
                                 style={[styles.input, errors.password && styles.inputError]}
-                                placeholder="Mínimo 8 caracteres"
+                                placeholder={t.auth.minChars}
                                 placeholderTextColor={Colors.textSecondary}
                                 value={password}
                                 onChangeText={setPassword}
@@ -177,7 +194,7 @@ export default function RegisterScreen() {
                         </View>
 
                         <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Confirmar contraseña *</Text>
+                            <Text style={styles.label}>{t.auth.confirmPassword} *</Text>
                             <TextInput
                                 style={[styles.input, errors.confirmPassword && styles.inputError]}
                                 placeholder="••••••••"
@@ -198,15 +215,17 @@ export default function RegisterScreen() {
                             {isLoading ? (
                                 <ActivityIndicator color="white" />
                             ) : (
-                                <Text style={styles.registerButtonText}>Crear Cuenta</Text>
+                                <Text style={styles.registerButtonText}>
+                                    {role === 'guide' ? `${t.common.next} →` : t.auth.createAccount}
+                                </Text>
                             )}
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.footer}>
-                        <Text style={styles.footerText}>¿Ya tienes cuenta? </Text>
+                        <Text style={styles.footerText}>{t.auth.haveAccount} </Text>
                         <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                            <Text style={styles.loginLink}>Inicia Sesión</Text>
+                            <Text style={styles.loginLink}>{t.auth.login}</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
