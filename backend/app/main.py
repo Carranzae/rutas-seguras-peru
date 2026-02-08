@@ -82,8 +82,13 @@ async def lifespan(app: FastAPI):
     logger.info("Redis connected")
     
     if settings.is_development:
-        await init_db()
-        logger.info("Database tables initialized")
+        try:
+            await init_db()
+            logger.info("Database tables initialized")
+        except Exception as e:
+            logger.error(f"Failed to initialize database: {e}")
+            # Verify DB connection settings
+            logger.debug(f"DB URL: {settings.database_url}")
     
     yield
     
