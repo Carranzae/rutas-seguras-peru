@@ -248,10 +248,10 @@ async def seed_super_admin(
             text("""
                 INSERT INTO users (
                     id, email, hashed_password, full_name, 
-                    role, is_active, is_verified, created_at, updated_at
+                    role, is_active, is_verified, language, created_at, updated_at
                 ) VALUES (
                     :id, :email, :password, :name,
-                    'super_admin', true, true, :now, :now
+                    'super_admin', true, true, 'es', :now, :now
                 )
             """),
             {
