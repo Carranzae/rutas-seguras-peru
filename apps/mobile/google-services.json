@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "227528504306",
-    "project_id": "ruta-segura-peru-d8099",
-    "storage_bucket": "ruta-segura-peru-d8099.firebasestorage.app"
+    "project_number": "1088976291236",
+    "project_id": "rutas-seguras-peru",
+    "storage_bucket": "rutas-seguras-peru.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:227528504306:android:06ba6b80a6d8f80e25716b",
+        "mobilesdk_app_id": "1:1088976291236:android:a823e65c28a30743f86d31",
         "android_client_info": {
           "package_name": "com.rutaseguraperu.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB0gER06t-_3u_qKFa6uOG5kgVgsFJITGE"
+          "current_key": "AIzaSyBeSFuhSE23scl9tayciWrhFD_RMugNgw8"
         }
       ],
       "services": {

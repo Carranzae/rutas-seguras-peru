@@ -11,14 +11,20 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rutaseguraperu.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
           "fetch",
-          "remote-notification"
+          "remote-notification",
+          "audio"
         ],
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrarte en el mapa y en caso de emergencia.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Necesitamos tu ubicación para seguimiento en tiempo real durante los tours."
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Necesitamos tu ubicación para seguimiento en tiempo real durante los tours.",
+        "NSCameraUsageDescription": "Necesitamos acceso a tu cámara para verificación biométrica y subir fotos.",
+        "NSMicrophoneUsageDescription": "Necesitamos acceso al micrófono para traducción de voz en tiempo real y llamadas de emergencia.",
+        "NSPhotoLibraryUsageDescription": "Necesitamos acceso a tus fotos para subir foto de perfil y compartir momentos.",
+        "NSContactsUsageDescription": "Necesitamos acceso a tus contactos para agregar contactos de emergencia rápidamente."
       }
     },
     "android": {
@@ -38,10 +44,19 @@
         "RECORD_AUDIO",
         "VIBRATE",
         "RECEIVE_BOOT_COMPLETED",
+        "READ_CONTACTS",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_CONTACTS",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {
@@ -64,26 +79,45 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Permitir a Ruta Segura usar tu ubicación para seguimiento en tiempo real.",
           "locationAlwaysPermission": "Permitir a Ruta Segura usar tu ubicación en segundo plano.",
-          "locationWhenInUsePermission": "Permitir a Ruta Segura usar tu ubicación."
+          "locationWhenInUsePermission": "Permitir a Ruta Segura usar tu ubicación.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ],
       [
         "expo-notifications",
         {
           "icon": "./assets/images/android-icon-monochrome.png",
-          "color": "#1152d4"
+          "color": "#1152d4",
+          "sounds": [],
+          "mode": "production"
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Permitir a Ruta Segura acceder a tu cámara para verificación biométrica."
+          "cameraPermission": "Permitir a Ruta Segura acceder a tu cámara para verificación biométrica.",
+          "microphonePermission": "Permitir a Ruta Segura grabar audio para traducción en tiempo real.",
+          "recordAudioAndroid": true
         }
       ],
       [
-        "@maplibre/maplibre-react-native",
+        "expo-image-picker",
         {
-          "locationWhenInUsePermission": "Necesitamos tu ubicación para mostrar tu posición en el mapa."
+          "photosPermission": "Permitir a Ruta Segura acceder a tus fotos para subir foto de perfil.",
+          "cameraPermission": "Permitir a Ruta Segura tomar fotos para tu perfil."
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Permitir a Ruta Segura acceder a tus contactos para agregar contactos de emergencia."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Permitir a Ruta Segura grabar audio para traducción en tiempo real."
         }
       ]
     ],

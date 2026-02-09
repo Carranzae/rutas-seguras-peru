@@ -152,3 +152,122 @@ async def logout_all_devices(
     logger.info(f"User {user_id} logged out from all devices")
     
     return None
+
+
+# ============================================
+# ADMIN SEED ENDPOINT (For Railway deployment)
+# ============================================
+import os
+from pydantic import BaseModel
+
+
+class SeedAdminRequest(BaseModel):
+    """Request body for seeding admin"""
+    email: str = "admin@rutaseguraperu.com"
+    password: str = "RutaSegura2024!"
+    name: str = "Super Admin"
+    secret_key: str  # Must match JWT_SECRET_KEY for security
+
+
+@router.post(
+    "/seed-admin",
+    response_model=dict,
+    summary="Create or reset Super Admin (deployment use only)",
+    description="Create Super Admin or reset password if exists. Requires JWT_SECRET_KEY as secret_key.",
+)
+async def seed_super_admin(
+    data: SeedAdminRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Create Super Admin or reset password.
+    
+    This endpoint is for initial deployment setup.
+    It requires the JWT_SECRET_KEY as security measure.
+    
+    Usage in Railway console:
+    curl -X POST https://your-api.railway.app/api/v1/auth/seed-admin \\
+        -H "Content-Type: application/json" \\
+        -d '{"email":"admin@email.com","password":"MiPassword123!","name":"Admin","secret_key":"YOUR_JWT_SECRET"}'
+    """
+    from fastapi import HTTPException
+    from app.config import settings
+    import bcrypt
+    from uuid import uuid4
+    from sqlalchemy import text
+    from datetime import datetime
+    
+    # Verify secret key matches JWT secret
+    if data.secret_key != settings.jwt_secret_key:
+        logger.warning(f"Invalid seed-admin attempt with wrong secret key")
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid secret key. Use JWT_SECRET_KEY from Railway variables."
+        )
+    
+    # Hash password with bcrypt
+    salt = bcrypt.gensalt(rounds=12)
+    hashed_password = bcrypt.hashpw(data.password.encode('utf-8'), salt).decode('utf-8')
+    
+    # Check if user exists
+    result = await db.execute(
+        text("SELECT id FROM users WHERE email = :email"),
+        {"email": data.email}
+    )
+    existing = result.fetchone()
+    
+    if existing:
+        # Update existing user password
+        await db.execute(
+            text("""
+                UPDATE users 
+                SET hashed_password = :password, 
+                    role = 'super_admin',
+                    is_active = true,
+                    is_verified = true,
+                    updated_at = :now
+                WHERE email = :email
+            """),
+            {
+                "password": hashed_password,
+                "email": data.email,
+                "now": datetime.utcnow(),
+            }
+        )
+        await db.commit()
+        logger.info(f"Super Admin password reset: {data.email}")
+        return {
+            "status": "updated",
+            "message": f"Super Admin password has been reset",
+            "email": data.email,
+        }
+    else:
+        # Create new admin
+        user_id = str(uuid4())
+        await db.execute(
+            text("""
+                INSERT INTO users (
+                    id, email, hashed_password, full_name, 
+                    role, is_active, is_verified, created_at, updated_at
+                ) VALUES (
+                    :id, :email, :password, :name,
+                    'super_admin', true, true, :now, :now
+                )
+            """),
+            {
+                "id": user_id,
+                "email": data.email,
+                "password": hashed_password,
+                "name": data.name,
+                "now": datetime.utcnow(),
+            }
+        )
+        await db.commit()
+        logger.info(f"Super Admin created: {data.email} | ID: {user_id}")
+        return {
+            "status": "created",
+            "message": "Super Admin created successfully",
+            "email": data.email,
+            "id": user_id,
+        }
+
