@@ -2,24 +2,11 @@
  * Ruta Segura Perú - API Configuration
  * Environment-based configuration for backend connection
  */
-import { Platform } from 'react-native';
 
 // Determine base URL based on environment
 const getBaseUrl = (): string => {
-    // === DESARROLLO ===
-    // Cambia esta IP cuando cambies de red
-    const LOCAL_BACKEND_IP = '192.168.48.174';
-
-    // Para APK de producción real, descomenta esta línea:
-    // return 'https://api.rutaseguraperu.com';
-
-    // Para pruebas con backend local (APK o desarrollo):
-    if (Platform.OS === 'web') {
-        return 'http://localhost:8000';
-    }
-
-    // Android/iOS - usa la IP de tu laptop
-    return `http://${LOCAL_BACKEND_IP}:8000`;
+    // === PRODUCCIÓN (Railway) ===
+    return 'https://rutas-seguras-peru-production.up.railway.app';
 };
 
 export const API_CONFIG = {

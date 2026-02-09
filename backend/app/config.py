@@ -90,8 +90,16 @@ class Settings(BaseSettings):
     emergency_sms_enabled: bool = True
     emergency_call_enabled: bool = True
     
-    # CORS
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8081"]
+    # CORS - include Railway auto-generated URLs and production domains
+    cors_origins: List[str] = [
+        "http://localhost:3000",       # Next.js Super Admin
+        "http://localhost:3001",       # Next.js Agency Web
+        "http://localhost:8081",       # Expo Metro
+        "http://localhost:19006",      # Expo Web
+        "https://*.railway.app",       # Railway deployments
+        "https://*.up.railway.app",    # Railway deployments (alt)
+        "*",                           # Mobile apps (React Native)
+    ]
     
     # Logging
     log_level: str = "INFO"

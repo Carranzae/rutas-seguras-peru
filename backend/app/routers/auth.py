@@ -36,6 +36,17 @@ async def register(
     """Register a new user account."""
     service = AuthService(db)
     user = await service.register(data)
+    
+    # Notify all connected admins about new registration
+    from app.core.websocket_manager import manager
+    await manager.broadcast_new_user(
+        user_id=str(user.id),
+        email=user.email,
+        role=user.role.value if hasattr(user.role, 'value') else str(user.role),
+        full_name=user.full_name,
+        phone=user.phone,
+    )
+    
     return user
 
 

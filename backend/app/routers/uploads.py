@@ -262,36 +262,69 @@ async def upload_tour_gallery(
 @router.delete(
     "/tour/{tour_id}/gallery",
     summary="Remove image from tour gallery",
+    status_code=status.HTTP_200_OK,
     dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN, UserRole.SUPER_ADMIN))],
 )
 async def remove_from_tour_gallery(
-    tour_id: uuid.UUID,
-    image_url: str,
+    tour_id: str,  # Accept as string, convert to UUID inside
+    image_url: str = None,  # Query parameter
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Remove an image from tour gallery."""
     from app.models.tour import Tour
     from sqlalchemy import select
+    from urllib.parse import unquote
+    
+    # Validate and convert tour_id to UUID
+    try:
+        tour_uuid = uuid.UUID(tour_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid tour_id format. Expected UUID."
+        )
+    
+    # Validate image_url is provided
+    if not image_url:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="image_url query parameter is required"
+        )
+    
+    # Decode URL-encoded image_url
+    decoded_url = unquote(image_url)
     
     # Get tour
-    result = await db.execute(select(Tour).where(Tour.id == tour_id))
+    result = await db.execute(select(Tour).where(Tour.id == tour_uuid))
     tour = result.scalar_one_or_none()
     
     if not tour:
         raise HTTPException(status_code=404, detail="Tour not found")
     
+    # Check if image exists in gallery
+    if not tour.gallery_urls or decoded_url not in tour.gallery_urls:
+        raise HTTPException(
+            status_code=404,
+            detail="Image not found in tour gallery"
+        )
+    
     # Remove from gallery
-    if tour.gallery_urls and image_url in tour.gallery_urls:
-        tour.gallery_urls = [url for url in tour.gallery_urls if url != image_url]
-        await db.commit()
-        
-        # Optionally delete file from disk
-        # file_path = os.path.join(UPLOAD_DIR, image_url.replace("/uploads/", ""))
-        # if os.path.exists(file_path):
-        #     os.remove(file_path)
+    tour.gallery_urls = [url for url in tour.gallery_urls if url != decoded_url]
+    await db.commit()
+    
+    # Try to delete file from disk (don't fail if file doesn't exist)
+    try:
+        file_path = os.path.join(UPLOAD_DIR, decoded_url.replace("/uploads/", ""))
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    except Exception as e:
+        # Log but don't fail - the DB record is what matters
+        print(f"Warning: Could not delete file {decoded_url}: {e}")
     
     return {
         "message": "Image removed from gallery",
+        "removed_url": decoded_url,
         "remaining_images": len(tour.gallery_urls or []),
     }
+

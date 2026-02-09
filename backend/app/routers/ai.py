@@ -213,12 +213,17 @@ async def get_translation_session(session_id: str):
     return TranslationSessionResponse(**session)
 
 
+class JoinSessionRequest(BaseModel):
+    """Request body for joining a translation session"""
+    user_id: str
+    user_type: str = "tourist"
+    language: str = "en"
+
+
 @router.post("/translation-session/{session_id}/join")
 async def join_translation_session(
     session_id: str,
-    user_id: str,
-    user_type: str = "tourist",
-    language: str = "en"
+    request: JoinSessionRequest,
 ):
     """
     Join an existing translation session.
@@ -232,15 +237,15 @@ async def join_translation_session(
     
     # Add participant
     participant = {
-        "user_id": user_id,
-        "user_type": user_type,
-        "language": language,
+        "user_id": request.user_id,
+        "user_type": request.user_type,
+        "language": request.language,
         "is_connected": True,
         "joined_at": datetime.utcnow().isoformat()
     }
     
     # Check if already in session
-    existing = next((p for p in session["participants"] if p["user_id"] == user_id), None)
+    existing = next((p for p in session["participants"] if p["user_id"] == request.user_id), None)
     if existing:
         existing.update(participant)
     else:
@@ -249,16 +254,31 @@ async def join_translation_session(
     return {"status": "joined", "session_id": session_id, "participants_count": len(session["participants"])}
 
 
-@router.delete("/translation-session/{session_id}")
+@router.delete(
+    "/translation-session/{session_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="End and delete a translation session",
+)
 async def end_translation_session(session_id: str):
     """
     End a translation session.
+    Returns 204 No Content on success per REST standards.
     """
     session = translation_sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
+    # Mark as inactive first
     session["is_active"] = False
+    session["ended_at"] = datetime.utcnow().isoformat()
     
-    return {"status": "ended", "session_id": session_id}
+    # Remove from memory (in production, remove from Redis)
+    try:
+        del translation_sessions[session_id]
+    except KeyError:
+        pass  # Already deleted
+    
+    # Return None for 204 No Content
+    return None
+
 

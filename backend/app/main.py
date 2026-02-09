@@ -175,6 +175,15 @@ app.include_router(ai_router.router, prefix=settings.api_v1_prefix)
 app.include_router(notifications_router.router, prefix=settings.api_v1_prefix)
 app.include_router(analytics_router, prefix=settings.api_v1_prefix)
 
+# Cloud Services Routers
+from app.routers import media as media_router
+from app.routers import translation as translation_router
+from app.routers import ai_copilot as ai_copilot_router
+
+app.include_router(media_router.router, prefix=settings.api_v1_prefix)
+app.include_router(translation_router.router, prefix=settings.api_v1_prefix)
+app.include_router(ai_copilot_router.router, prefix=settings.api_v1_prefix)
+
 # ============ STATIC FILES ============
 from fastapi.staticfiles import StaticFiles
 import os

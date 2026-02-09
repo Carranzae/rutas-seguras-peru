@@ -79,6 +79,12 @@
         {
           "cameraPermission": "Permitir a Ruta Segura acceder a tu cámara para verificación biométrica."
         }
+      ],
+      [
+        "@maplibre/maplibre-react-native",
+        {
+          "locationWhenInUsePermission": "Necesitamos tu ubicación para mostrar tu posición en el mapa."
+        }
       ]
     ],
     "experiments": {

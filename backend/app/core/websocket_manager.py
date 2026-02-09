@@ -240,6 +240,32 @@ class ConnectionManager:
             return 'idle'
         return 'active'
     
+    async def broadcast_new_user(
+        self,
+        user_id: str,
+        email: str,
+        role: str,
+        full_name: Optional[str] = None,
+        phone: Optional[str] = None,
+    ):
+        """
+        Broadcast notification of new user registration to all admins.
+        Used when a tourist or guide successfully registers.
+        """
+        message = {
+            "type": "NEW_USER_REGISTRATION",
+            "data": {
+                "user_id": user_id,
+                "email": email,
+                "role": role,
+                "full_name": full_name or email.split("@")[0],
+                "phone": phone,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        }
+        await self.broadcast_to_admins(message)
+        logger.info(f"New user registration broadcast | {role}: {email}")
+    
     def get_stats(self) -> dict:
         """Get current connection statistics"""
         return {

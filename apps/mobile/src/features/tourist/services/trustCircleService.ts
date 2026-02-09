@@ -6,7 +6,7 @@ import { httpClient } from '@/src/core/api';
 import type { TrustCircleContact } from '../types';
 
 class TrustCircleService {
-    private readonly endpoint = '/users/emergency-contacts';
+    private readonly endpoint = '/emergency-contacts';
 
     /**
      * Get trust circle contacts
