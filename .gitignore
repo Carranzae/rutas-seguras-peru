@@ -58,6 +58,11 @@ firebase-credentials.json
 **/firebase*.json
 !backend/firebase-credentials.json.example
 
+# Google Services (Android Firebase config)
+google-services.json
+**/google-services.json
+!apps/mobile/google-services.json.example
+
 # API Keys and secrets
 *.secret
 *.secrets
