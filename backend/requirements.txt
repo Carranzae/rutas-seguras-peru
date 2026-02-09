@@ -23,6 +23,7 @@ email-validator==2.1.0
 
 # Geospatial
 shapely==2.0.2
+numpy<2.0.0
 
 # External Services
 firebase-admin==6.4.0
