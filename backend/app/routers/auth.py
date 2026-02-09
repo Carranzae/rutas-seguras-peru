@@ -215,7 +215,7 @@ async def seed_super_admin(
                 text("""
                     UPDATE users 
                     SET hashed_password = :password, 
-                        role = 'super_admin',
+                        role = 'SUPER_ADMIN',
                         is_active = true,
                         is_verified = true,
                         updated_at = :now
@@ -244,7 +244,7 @@ async def seed_super_admin(
                         role, is_active, is_verified, language, created_at, updated_at
                     ) VALUES (
                         :id, :email, :password, :name,
-                        'super_admin', true, true, 'es', :now, :now
+                        'SUPER_ADMIN', true, true, 'es', :now, :now
                     )
                 """),
                 {
