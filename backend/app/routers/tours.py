@@ -156,7 +156,7 @@ async def get_tour(
     status_code=status.HTTP_201_CREATED,
     summary="Create tour",
     description="Create a new tour (agency admin only).",
-    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN))],
+    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN, UserRole.SUPER_ADMIN))],
 )
 async def create_tour(
     data: TourCreate,
@@ -169,6 +169,8 @@ async def create_tour(
     # Get agency from user
     agency_id = current_user.agency_id
     if not agency_id:
+        # If Super Admin doesn't have agency_id, we might need a way to assign one or use a default
+        # For now, strict check, but at least they pass the role check
         from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="User not associated with an agency")
     
@@ -184,7 +186,7 @@ async def create_tour(
     "/{tour_id}",
     response_model=TourResponse,
     summary="Update tour",
-    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN))],
+    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN, UserRole.SUPER_ADMIN))],
 )
 async def update_tour(
     tour_id: uuid.UUID,
@@ -206,7 +208,7 @@ async def update_tour(
     "/{tour_id}/publish",
     response_model=TourResponse,
     summary="Publish tour",
-    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN))],
+    dependencies=[Depends(require_roles(UserRole.AGENCY_ADMIN, UserRole.SUPER_ADMIN))],
 )
 async def publish_tour(
     tour_id: uuid.UUID,

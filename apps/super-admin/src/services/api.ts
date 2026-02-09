@@ -161,6 +161,28 @@ class ApiService {
             body: JSON.stringify({ message, targets }),
         });
     }
+    // Uploads
+    async uploadFile(file: File, category: string = 'general'): Promise<{ url: string }> {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('category', category);
+
+        const token = this.token || (typeof window !== 'undefined' ? localStorage.getItem('superadmin_token') : null);
+
+        const response = await fetch(`${this.baseUrl}/uploads/image`, {
+            method: 'POST',
+            headers: {
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload Error: ${response.status}`);
+        }
+
+        return response.json();
+    }
 }
 
 export const api = new ApiService();

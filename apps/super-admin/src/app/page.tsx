@@ -83,6 +83,9 @@ export default function CommandCenterPage() {
       case 'payments':
         push('/payments');
         break;
+      case 'marketplace':
+        push('/tours');
+        break;
     }
   };
 
@@ -259,6 +262,10 @@ export default function CommandCenterPage() {
           <button onClick={() => handleQuickAction('payments')} className="glass-panel p-3 hover:bg-[#00f2ff]/10 transition flex flex-col items-center gap-2 group border border-transparent hover:border-[#00f2ff]/30">
             <span className="text-2xl group-hover:scale-110 transition">💳</span>
             <span className="font-telemetry text-[10px] text-[#00f2ff]">VER PAGOS</span>
+          </button>
+          <button onClick={() => handleQuickAction('marketplace')} className="glass-panel p-3 hover:bg-[#00f2ff]/10 transition flex flex-col items-center gap-2 group border border-transparent hover:border-[#00f2ff]/30">
+            <span className="text-2xl group-hover:scale-110 transition">🏞️</span>
+            <span className="font-telemetry text-[10px] text-[#00f2ff]">MARKETPLACE</span>
           </button>
           <button onClick={() => push('/verifications')} className="glass-panel p-3 hover:bg-[#f59e0b]/10 transition flex flex-col items-center gap-2 group border border-transparent hover:border-[#f59e0b]/30">
             <span className="text-2xl group-hover:scale-110 transition">🔍</span>

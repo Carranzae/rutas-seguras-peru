@@ -10,10 +10,16 @@ export interface Tour {
     agency_name?: string;
     current_bookings: number;
     image_url?: string;
+    cover_image_url?: string;
+    gallery_urls?: string[];
+    video_url?: string;
     location: string;
     category: string;
     difficulty: string;
     max_capacity: number;
+    rating?: number;
+    reviews_count?: number;
+    is_featured?: boolean;
 }
 
 export interface CreateTourData {
@@ -25,7 +31,12 @@ export interface CreateTourData {
     difficulty: string;
     category: string;
     start_location?: string;
+    cover_image_url?: string;
+    gallery_urls?: string[];
+    video_url?: string;
+    is_featured?: boolean;
 }
+
 
 export const toursService = {
     async getAll(): Promise<Tour[]> {
