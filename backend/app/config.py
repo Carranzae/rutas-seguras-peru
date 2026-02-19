@@ -3,6 +3,7 @@ Ruta Segura Perú - Backend Configuration
 Pydantic Settings for environment variable management
 """
 from functools import lru_cache
+import json
 from typing import List
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -90,36 +91,27 @@ class Settings(BaseSettings):
     emergency_sms_enabled: bool = True
     emergency_call_enabled: bool = True
     
-    # CORS - include Railway auto-generated URLs and production domains
-    cors_origins: List[str] = [
-        "http://localhost:3000",       # Next.js Super Admin
-        "http://localhost:3001",       # Next.js Agency Web
-        "http://localhost:8081",       # Expo Metro
-        "http://localhost:19006",      # Expo Web
-        "https://*.railway.app",       # Railway deployments
-        "https://*.up.railway.app",    # Railway deployments (alt)
-        "*",                           # Mobile apps (React Native)
-    ]
+    # CORS - stored as string to avoid pydantic_settings JSON pre-parsing
+    # Accepted formats: "*", "http://a.com,http://b.com", or '["http://a.com"]'
+    cors_origins: str = "*"
     
     # Logging
     log_level: str = "INFO"
     log_file: str = "logs/app.log"
     
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            v = v.strip()
-            # Try JSON array first: '["http://a.com", "http://b.com"]'
-            if v.startswith("["):
-                import json
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse cors_origins string into a list.
+        Supports: '*', comma-separated, or JSON array."""
+        v = self.cors_origins.strip()
+        if v.startswith("["):
+            try:
                 return json.loads(v)
-            # Plain wildcard or single origin: '*' or 'http://localhost:3000'
-            if "," not in v:
-                return [v]
-            # Comma-separated: 'http://a.com,http://b.com'
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
-        return v
+            except json.JSONDecodeError:
+                return ["*"]
+        if "," not in v:
+            return [v]
+        return [origin.strip() for origin in v.split(",") if origin.strip()]
     
     @property
     def is_production(self) -> bool:
