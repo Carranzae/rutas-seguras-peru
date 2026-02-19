@@ -409,7 +409,7 @@ async def get_verification_status(
         )
     
     # Users can only check their own verifications
-    if verification.user_id != current_user.id and current_user.role not in ['super_admin']:
+    if verification.user_id != current_user.id and current_user.role != UserRole.SUPER_ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to view this verification"

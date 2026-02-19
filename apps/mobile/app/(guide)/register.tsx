@@ -220,10 +220,12 @@ export default function GuideRegistrationScreen() {
                 throw new Error('Error al iniciar sesión después del registro');
             }
 
-            // Store token for subsequent requests
-            const token = loginResponse.data.access_token;
-            await AsyncStorage.setItem('access_token', token);
-            await AsyncStorage.setItem('refresh_token', loginResponse.data.refresh_token);
+            // Save tokens using httpClient to ensure correct storage keys
+            await httpClient.saveTokens({
+                access_token: loginResponse.data.access_token,
+                refresh_token: loginResponse.data.refresh_token,
+                token_type: 'bearer',
+            });
 
             // 3. Upload documents (TODO: in production, upload to S3/cloud)
             const dniUrl = dniPhoto;

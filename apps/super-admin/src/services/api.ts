@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use lib/api.ts + lib/auth.ts instead. This file is a legacy wrapper.
+ * All new code should import from '@/lib/api' and '@/lib/auth'.
+ */
 // API Service for Super Admin Dashboard
 import { API_BASE_URL, API_VERSION } from '@/lib/api';
 

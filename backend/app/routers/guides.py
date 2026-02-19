@@ -235,15 +235,6 @@ async def verify_dircetur(
     )
     return _guide_to_response(guide)
 
-
-    service = GuideService(db)
-    guide = await service.verify_biometric(
-        guide_id=guide_id,
-        biometric_data={},
-    )
-    return _guide_to_response(guide)
-
-
 @router.get(
     "/me/stats",
     summary="Get my stats",
