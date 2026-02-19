@@ -1,0 +1,88 @@
+# ============================================
+# EAS BUILD IGNORE FILE (replaces .gitignore for EAS builds)
+# This file exists because .gitignore blocks google-services.json
+# which is needed for Android APK builds.
+# ============================================
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native (regenerated during EAS prebuild)
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+# ============================================
+# SENSITIVE FILES - block from EAS builds too
+# ============================================
+
+# All .env files
+.env
+*.env
+backend/.env
+apps/**/.env
+
+# Firebase credentials (backend only - CRITICAL)
+firebase-credentials.json
+**/firebase-credentials.json
+
+# NOTE: google-services.json is NOT excluded here!
+# It is required by Expo prebuild for Android APK builds.
+# The root .gitignore blocks it from git, but EAS needs it.
+
+# API Keys and secrets
+*.secret
+*.secrets
+*-credentials.json
+service-account*.json
+
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.idea/
+.vscode/settings.json
+
+# Uploads (user content)
+uploads/
+
+# Git internals (not needed in EAS)
+.git/
