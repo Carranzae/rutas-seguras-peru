@@ -256,7 +256,7 @@ export default function ExploreScreen() {
                 <Text style={styles.featuredTitle} numberOfLines={2}>{item.name}</Text>
                 <View style={styles.featuredMeta}>
                     <Text style={styles.featuredDuration}>🕐 {item.duration_hours}h</Text>
-                    <Text style={styles.featuredPrice}>${item.price}</Text>
+                    <Text style={styles.featuredPrice}>S/{item.price}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -286,7 +286,7 @@ export default function ExploreScreen() {
                             {item.rating} ({item.reviews_count} {t.tours.reviews})
                         </Text>
                     </View>
-                    <Text style={styles.tourItemPrice}>${item.price}</Text>
+                    <Text style={styles.tourItemPrice}>S/{item.price}</Text>
                 </View>
             </View>
         </TouchableOpacity>

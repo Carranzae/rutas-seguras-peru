@@ -1,7 +1,28 @@
+# EAS Build Ignore File
+# When this file exists, EAS uses it INSTEAD of .gitignore
+# google-services.json is explicitly NOT excluded here to fix build
+
+# Node
 /node_modules
+
+# Native build dirs (regenerated during EAS build)
 /android
 /ios
+
+# Expo cache
 /.expo
+
+# Keystores
 *.jks
 *.keystore
+
+# Build output
 /dist
+
+# Backend & other apps (not needed for mobile APK)
+/../../backend
+/../../apps/super-admin
+
+# Explicitly INCLUDE firebase config for build
+!google-services.json
+!GoogleService-Info.plist

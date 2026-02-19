@@ -109,8 +109,16 @@ class Settings(BaseSettings):
     @classmethod
     def parse_cors_origins(cls, v):
         if isinstance(v, str):
-            import json
-            return json.loads(v)
+            v = v.strip()
+            # Try JSON array first: '["http://a.com", "http://b.com"]'
+            if v.startswith("["):
+                import json
+                return json.loads(v)
+            # Plain wildcard or single origin: '*' or 'http://localhost:3000'
+            if "," not in v:
+                return [v]
+            # Comma-separated: 'http://a.com,http://b.com'
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
     
     @property

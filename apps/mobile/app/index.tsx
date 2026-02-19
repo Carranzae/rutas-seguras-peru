@@ -41,9 +41,14 @@ export default function WelcomeScreen() {
         try {
             const token = await AsyncStorage.getItem('auth_token');
             const userData = await AsyncStorage.getItem('user_data');
+            const userRole = await AsyncStorage.getItem('user_role');
             if (token && userData) {
-                // Already logged in, go to home
-                router.replace('/(tourist)/(tabs)/explore');
+                // Route based on saved role
+                if (userRole === 'guide') {
+                    router.replace('/(guide)/(tabs)/dashboard');
+                } else {
+                    router.replace('/(tourist)/(tabs)/explore');
+                }
             }
         } catch (error) {
             console.log('No existing session');

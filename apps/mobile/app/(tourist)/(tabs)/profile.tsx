@@ -141,7 +141,7 @@ export default function ProfileScreen() {
                 <Text style={[styles.bookingStatus, { color: getStatusColor(item.status) }]}>
                     {getStatusText(item.status)}
                 </Text>
-                <Text style={styles.bookingPrice}>${item.total_amount}</Text>
+                <Text style={styles.bookingPrice}>S/{item.total_amount}</Text>
             </View>
         </TouchableOpacity>
     );
