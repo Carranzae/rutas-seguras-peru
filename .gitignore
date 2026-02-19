@@ -61,6 +61,7 @@ firebase-credentials.json
 # Google Services (Android Firebase config)
 google-services.json
 **/google-services.json
+!apps/mobile/google-services.json
 !apps/mobile/google-services.json.example
 
 # API Keys and secrets
