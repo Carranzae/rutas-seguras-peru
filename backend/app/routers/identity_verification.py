@@ -83,6 +83,9 @@ class PendingVerificationResponse(BaseModel):
     document_score: Optional[int]
     submitted_at: str
     submission_device: Optional[str]
+    nationality: Optional[str] = None
+    residence_city: Optional[str] = None
+    department: Optional[str] = None
 
 
 class PaginatedVerificationsResponse(BaseModel):

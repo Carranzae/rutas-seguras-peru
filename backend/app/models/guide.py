@@ -62,6 +62,20 @@ class Guide(BaseModel):
         nullable=True,
     )
     
+    # Demographics
+    nationality: Mapped[Optional[str]] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+    residence_city: Mapped[Optional[str]] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+    department: Mapped[Optional[str]] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+    
     # Document Images
     dircetur_front_image_url: Mapped[Optional[str]] = mapped_column(
         String(500),

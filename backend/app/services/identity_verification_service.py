@@ -186,10 +186,11 @@ class IdentityVerificationService:
         )
         total = count_result.scalar() or 0
         
-        # Get paginated results with user info
+        # Get paginated results with user info and guide info
         result = await db.execute(
-            select(IdentityVerification, User)
+            select(IdentityVerification, User, Guide)
             .join(User, IdentityVerification.user_id == User.id)
+            .outerjoin(Guide, User.id == Guide.user_id)
             .where(IdentityVerification.status.in_([
                 VerificationStatus.PENDING,
                 VerificationStatus.IN_REVIEW,
@@ -200,8 +201,8 @@ class IdentityVerificationService:
         )
         
         verifications = []
-        for verification, user in result.fetchall():
-            verifications.append({
+        for verification, user, guide in result.fetchall():
+            item = {
                 "id": str(verification.id),
                 "user_id": str(verification.user_id),
                 "user_name": user.full_name,
@@ -216,7 +217,13 @@ class IdentityVerificationService:
                 "document_score": verification.document_score,
                 "submitted_at": verification.created_at.isoformat(),
                 "submission_device": verification.submission_device,
-            })
+            }
+            if guide:
+                item["nationality"] = guide.nationality
+                item["residence_city"] = guide.residence_city
+                item["department"] = guide.department
+                
+            verifications.append(item)
         
         return verifications, total
     

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -34,6 +34,9 @@ interface GuideData {
     experience_years: string;
     specialties: string;
     password: string;
+    nationality: string;
+    residence_city: string;
+    department: string;
 }
 
 interface VerificationStatus {
@@ -48,12 +51,6 @@ interface VerificationResponse {
 export default function GuideRegistrationScreen() {
     const router = useRouter();
     // Receive params from auth/register screen
-    const params = useLocalSearchParams<{
-        name?: string;
-        email?: string;
-        phone?: string;
-        password?: string;
-    }>();
     const [step, setStep] = useState<RegistrationStep>('personal');
     const [loading, setLoading] = useState(false);
 
@@ -68,6 +65,9 @@ export default function GuideRegistrationScreen() {
         experience_years: '',
         specialties: '',
         password: '',
+        nationality: '',
+        residence_city: '',
+        department: '',
     });
 
     // Initialize form with params from auth/register screen
@@ -186,7 +186,7 @@ export default function GuideRegistrationScreen() {
     };
 
 
-    // Submit complete registration
+    // Submit complete registration using public endpoint
     const submitRegistration = async () => {
         if (!dniPhoto || !certificatePhoto || !selfiePhoto) {
             Alert.alert('Error', 'Falta completar los documentos');
@@ -197,86 +197,60 @@ export default function GuideRegistrationScreen() {
         setLoading(true);
 
         try {
-            // 1. First register the user account
-            await httpClient.post('/auth/register', {
-                email: guideData.email,
-                password: guideData.password,
-                full_name: guideData.full_name,
-                phone: guideData.phone,
-                role: 'guide',
+            const formData = new FormData();
+
+            // User Data
+            formData.append('email', guideData.email);
+            formData.append('password', guideData.password);
+            formData.append('full_name', guideData.full_name);
+            formData.append('phone', guideData.phone || '');
+
+            // Guide Data
+            formData.append('dircetur_license', guideData.dircetur_license);
+            formData.append('dni_number', guideData.dni_number);
+            formData.append('birth_date', guideData.birth_date);
+            formData.append('experience_years', guideData.experience_years || '0');
+            formData.append('specialties', guideData.specialties || '');
+            formData.append('nationality', guideData.nationality || '');
+            formData.append('residence_city', guideData.residence_city || '');
+            formData.append('department', guideData.department || '');
+
+            // Files
+            formData.append('dni_photo', {
+                uri: dniPhoto,
+                type: 'image/jpeg',
+                name: `dni_${guideData.dni_number}.jpg`,
+            } as any);
+
+            formData.append('certificate_photo', {
+                uri: certificatePhoto,
+                type: 'image/jpeg',
+                name: `cert_${guideData.dircetur_license}.jpg`,
+            } as any);
+
+            formData.append('selfie_photo', {
+                uri: selfiePhoto,
+                type: 'image/jpeg',
+                name: `selfie_${guideData.dni_number}.jpg`,
+            } as any);
+
+            const apiUrl = await getApiUrl();
+            const response = await fetch(`${apiUrl}/guides/public/register`, {
+                method: 'POST',
+                body: formData,
             });
 
-            // 2. Login to get authentication token
-            const loginResponse = await httpClient.post<{
-                access_token: string;
-                refresh_token: string;
-                user: { id: string };
-            }>('/auth/login', {
-                email: guideData.email,
-                password: guideData.password,
-            });
-
-            if (!loginResponse.data?.access_token) {
-                throw new Error('Error al iniciar sesión después del registro');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Error en el registro');
             }
 
-            // Save tokens using httpClient to ensure correct storage keys
-            await httpClient.saveTokens({
-                access_token: loginResponse.data.access_token,
-                refresh_token: loginResponse.data.refresh_token,
-                token_type: 'bearer',
-            });
-
-            // 3. Create Guide Profile (Critical Step)
-            // The user exists, but we must create the guide entity before adding verifications
-            await httpClient.post('/guides', {
-                dircetur_code: guideData.dircetur_license, // Use license as code initially
-                license_number: guideData.dircetur_license,
-                years_experience: parseInt(guideData.experience_years) || 0,
-                specialties: guideData.specialties.split(',').map(s => s.trim()),
-                bio: 'Guía registrado desde la app móvil',
-                languages: ['es'], // Default
-            });
-
-            // 4. Upload documents (TODO: in production, upload to S3/cloud)
-            const dniUrl = dniPhoto;
-            const certUrl = certificatePhoto;
-            const selfieUrl = selfiePhoto;
-
-            // 4. Submit biometric verification (now with auth token)
-            const biometricHash = `hash_${Date.now()}_${guideData.dni_number}`;
-            const deviceSignature = `device_${Date.now()}`;
-
-            const verificationResponse = await httpClient.post<VerificationResponse>('/verifications/biometric', {
-                verification_type: 'biometric_face',
-                biometric_hash: biometricHash,
-                device_signature: deviceSignature,
-                selfie_url: selfieUrl,
-                liveness_score: 95,
-            });
-
-            // 5. Submit document verification
-            await httpClient.post('/verifications/document', {
-                verification_type: 'document_dni',
-                document_url: dniUrl,
-                document_score: 90,
-            });
-
-            // 6. Submit DIRCETUR license
-            await httpClient.post('/verifications/document', {
-                verification_type: 'dircetur_license',
-                document_url: certUrl,
-                license_number: guideData.dircetur_license,
-                document_score: 95,
-            });
-
-            // Save verification ID for polling
-            setVerificationId(verificationResponse.data?.id || null);
+            // Since it's public and inactive, we do NOT get a verification_id yet back from the old response structure
+            // we will just show the waiting screen.
 
             // Store registration data locally
             await AsyncStorage.setItem('pending_guide_registration', JSON.stringify({
                 ...guideData,
-                verification_id: verificationResponse.data?.id,
                 submitted_at: new Date().toISOString(),
             }));
 
@@ -411,6 +385,39 @@ export default function GuideRegistrationScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Nacionalidad *</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={guideData.nationality}
+                        onChangeText={(t) => setGuideData({ ...guideData, nationality: t })}
+                        placeholder="Peruana"
+                        placeholderTextColor="#666"
+                    />
+                </View>
+
+                <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Lugar donde vive (Ciudad) *</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={guideData.residence_city}
+                        onChangeText={(t) => setGuideData({ ...guideData, residence_city: t })}
+                        placeholder="Cusco"
+                        placeholderTextColor="#666"
+                    />
+                </View>
+
+                <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Departamento para el que se registra *</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={guideData.department}
+                        onChangeText={(t) => setGuideData({ ...guideData, department: t })}
+                        placeholder="Cusco"
+                        placeholderTextColor="#666"
+                    />
+                </View>
+
+                <View style={styles.inputGroup}>
                     <Text style={styles.label}>Años de experiencia</Text>
                     <TextInput
                         style={styles.input}
@@ -440,7 +447,13 @@ export default function GuideRegistrationScreen() {
             <TouchableOpacity
                 style={styles.primaryButton}
                 onPress={() => {
-                    if (!guideData.full_name || !guideData.email || !guideData.phone || !guideData.birth_date || !guideData.password || !guideData.dni_number || !guideData.dircetur_license) {
+                    const requiredFields = [
+                        guideData.full_name, guideData.email, guideData.phone, guideData.birth_date,
+                        guideData.password, guideData.dni_number, guideData.dircetur_license,
+                        guideData.nationality, guideData.residence_city, guideData.department
+                    ];
+
+                    if (requiredFields.some(f => !f)) {
                         Alert.alert('Campos requeridos', 'Completa todos los campos obligatorios');
                         return;
                     }

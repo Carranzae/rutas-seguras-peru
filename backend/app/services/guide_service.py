@@ -45,6 +45,75 @@ class GuideService:
         
         return guide
     
+    async def register_public_guide(
+        self,
+        user_data: dict,
+        guide_data: dict,
+        verification_data: dict,
+    ) -> Guide:
+        """Register a new guide from the public endpoint (requires approval)."""
+        import bcrypt
+        
+        # Check if email is available
+        result = await self.db.execute(select(User).where(User.email == user_data["email"]))
+        if result.scalar_one_or_none():
+            raise BadRequestException("Email already registered")
+            
+        # 1. Create User (inactive until approved)
+        salt = bcrypt.gensalt(rounds=12)
+        hashed_password = bcrypt.hashpw(user_data["password"].encode('utf-8'), salt).decode('utf-8')
+        
+        user = User(
+            email=user_data["email"],
+            hashed_password=hashed_password,
+            full_name=user_data["full_name"],
+            phone=user_data.get("phone"),
+            role=UserRole.GUIDE,
+            is_active=False,  # CRITICAL: Needs review
+            is_verified=False,
+        )
+        self.db.add(user)
+        await self.db.flush()
+        
+        # 2. Create Guide profile
+        guide = Guide(
+            user_id=user.id,
+            dircetur_id=guide_data["dircetur_license"],
+            languages=guide_data.get("languages", ["es"]),
+            specializations=guide_data.get("specializations", []),
+            verification_status=GuideVerificationStatus.PENDING_REVIEW,
+            nationality=guide_data.get("nationality"),
+            residence_city=guide_data.get("residence_city"),
+            department=guide_data.get("department"),
+            dircetur_front_image_url=verification_data.get("dircetur_front_url"),
+            selfie_image_url=verification_data.get("selfie_url"),
+        )
+        # Optional fields
+        if "dircetur_back_url" in verification_data:
+            guide.dircetur_back_image_url = verification_data["dircetur_back_url"]
+        
+        self.db.add(guide)
+        await self.db.flush()
+        
+        # 3. Create IdentityVerification for Super Admin
+        from app.models.identity_verification import IdentityVerification, VerificationType, VerificationStatus
+        
+        identity_verification = IdentityVerification(
+            user_id=user.id,
+            verification_type=VerificationType.DIRCETUR_LICENSE,
+            status=VerificationStatus.PENDING,
+            selfie_url=verification_data.get("selfie_url"),
+            document_url=verification_data.get("dircetur_front_url"),
+            license_number=guide_data["dircetur_license"],
+        )
+        self.db.add(identity_verification)
+        
+        await self.db.commit()
+        await self.db.refresh(guide)
+        
+        logger.info(f"Public Guide registered pending review | User: {user.email}")
+        return guide
+    
     async def get_guide(self, guide_id: uuid.UUID) -> Guide:
         """Get guide by ID."""
         result = await self.db.execute(

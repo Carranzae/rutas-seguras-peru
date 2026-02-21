@@ -4,7 +4,8 @@ Guide management and verification endpoints
 """
 import uuid
 from typing import Optional, List
-from fastapi import APIRouter, Depends, status, Query
+import json
+from fastapi import APIRouter, Depends, status, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -81,6 +82,85 @@ def _guide_to_response(guide) -> GuideResponse:
         email=guide.user.email if hasattr(guide, 'user') and guide.user else None,
         phone=guide.user.phone if hasattr(guide, 'user') and guide.user else None,
     )
+
+
+@router.post(
+    "/public/register",
+    response_model=GuideResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register a new guide publicly (Requires Approval)",
+)
+async def public_register_guide(
+    # User Data
+    email: str = Form(...),
+    password: str = Form(...),
+    full_name: str = Form(...),
+    phone: Optional[str] = Form(None),
+    # Guide Data
+    dircetur_license: str = Form(...),
+    dni_number: str = Form(...),
+    birth_date: str = Form(...),
+    experience_years: str = Form("0"),
+    specialties: str = Form(""),
+    nationality: Optional[str] = Form(None),
+    residence_city: Optional[str] = Form(None),
+    department: Optional[str] = Form(None),
+    # Files
+    dni_photo: UploadFile = File(...),
+    certificate_photo: UploadFile = File(...),
+    selfie_photo: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    """Public endpoint to register a guide with documents. Account remains inactive until Super Admin approval."""
+    service = GuideService(db)
+    
+    # Validate files
+    validate_file(dni_photo, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE)
+    validate_file(certificate_photo, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE)
+    validate_file(selfie_photo, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE)
+    
+    # Process files
+    # Note: we don't have the guide ID yet, so we use a temporary session folder or email hash
+    import hashlib
+    email_hash = hashlib.md5(email.encode()).hexdigest()
+    base_dir = f"guides/pending/{email_hash}"
+    
+    dni_url = save_file(dni_photo, f"{base_dir}/dni")
+    cert_url = save_file(certificate_photo, f"{base_dir}/cert")
+    selfie_url = save_file(selfie_photo, f"{base_dir}/selfie")
+    
+    user_data = {
+        "email": email,
+        "password": password,
+        "full_name": full_name,
+        "phone": phone,
+    }
+    
+    guide_data = {
+        "dircetur_license": dircetur_license,
+        "dni_number": dni_number,
+        "birth_date": birth_date,
+        "experience_years": int(experience_years) if experience_years.isdigit() else 0,
+        "specialties": [s.strip() for s in specialties.split(",") if s.strip()] if specialties else [],
+        "nationality": nationality,
+        "residence_city": residence_city,
+        "department": department,
+    }
+    
+    verification_data = {
+        "dircetur_front_url": cert_url,
+        "dircetur_back_url": dni_url,  # storing DNI as backup doc for now since model allows back
+        "selfie_url": selfie_url,
+    }
+    
+    try:
+        guide = await service.register_public_guide(user_data, guide_data, verification_data)
+        return _guide_to_response(guide)
+    except Exception as e:
+        # Avoid orphan files if db transaction fails (optional cleanup)
+        # For a robust solution, you'd delete the uploaded files here.
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 @router.get(

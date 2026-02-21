@@ -17,6 +17,9 @@ interface PendingVerification {
     document_score?: number;
     submitted_at: string;
     submission_device?: string;
+    nationality?: string;
+    residence_city?: string;
+    department?: string;
 }
 
 interface ApiResponse {
@@ -390,6 +393,35 @@ export default function VerificationsPage() {
                                 </div>
                             </div>
 
+                            {/* Demographic Information */}
+                            {(selectedVerification.nationality || selectedVerification.residence_city || selectedVerification.department) && (
+                                <div className="bg-gray-800/50 rounded-lg p-4 mb-6 border border-gray-700">
+                                    <h3 className="text-sm font-bold text-gray-400 mb-3 flex items-center gap-2">
+                                        📍 DATOS DEMOGRÁFICOS
+                                    </h3>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        {selectedVerification.nationality && (
+                                            <div>
+                                                <p className="text-xs text-gray-500">Nacionalidad</p>
+                                                <p className="font-medium text-white">{selectedVerification.nationality}</p>
+                                            </div>
+                                        )}
+                                        {selectedVerification.residence_city && (
+                                            <div>
+                                                <p className="text-xs text-gray-500">Ciudad de Residencia</p>
+                                                <p className="font-medium text-white">{selectedVerification.residence_city}</p>
+                                            </div>
+                                        )}
+                                        {selectedVerification.department && (
+                                            <div>
+                                                <p className="text-xs text-gray-500">Departamento</p>
+                                                <p className="font-medium text-white">{selectedVerification.department}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* AI Analysis Button */}
                             <div className="mb-6">
                                 <button
@@ -528,8 +560,8 @@ export default function VerificationsPage() {
                                                 <div className="flex items-center justify-between p-3 bg-gray-900 rounded border border-gray-700">
                                                     <span className="text-gray-400">NIVEL DE RIESGO</span>
                                                     <span className={`font-bold px-2 py-1 rounded ${deepScanResult.data.summary.risk_level === 'HIGH' ? 'bg-red-900 text-red-100' :
-                                                            deepScanResult.data.summary.risk_level === 'MEDIUM' ? 'bg-yellow-900 text-yellow-100' :
-                                                                'bg-green-900 text-green-100'
+                                                        deepScanResult.data.summary.risk_level === 'MEDIUM' ? 'bg-yellow-900 text-yellow-100' :
+                                                            'bg-green-900 text-green-100'
                                                         }`}>
                                                         {deepScanResult.data.summary.risk_level}
                                                     </span>
