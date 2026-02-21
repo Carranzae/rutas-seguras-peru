@@ -12,8 +12,8 @@ class TrustCircleService {
      * Get trust circle contacts
      */
     async getContacts(): Promise<TrustCircleContact[]> {
-        const response = await httpClient.get<TrustCircleContact[]>(this.endpoint);
-        return response.data;
+        const response = await httpClient.get<{ items: TrustCircleContact[] }>(this.endpoint);
+        return response.data.items || [];
     }
 
     /**

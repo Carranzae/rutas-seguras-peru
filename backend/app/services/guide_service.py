@@ -161,6 +161,67 @@ class GuideService:
         
         return guide
     
+    async def submit_verification(
+        self,
+        guide_id: uuid.UUID,
+        data: dict,
+    ) -> Guide:
+        """Submit guide verification."""
+        guide = await self.get_guide(guide_id)
+        
+        if "dircetur_front_url" in data and data["dircetur_front_url"]:
+            guide.dircetur_front_image_url = data["dircetur_front_url"]
+        if "dircetur_back_url" in data and data["dircetur_back_url"]:
+            guide.dircetur_back_image_url = data["dircetur_back_url"]
+        if "selfie_url" in data and data["selfie_url"]:
+            guide.selfie_image_url = data["selfie_url"]
+            
+        guide.verification_status = GuideVerificationStatus.PENDING_REVIEW
+        
+        # Create an IdentityVerification record so Super Admin can review it
+        from app.models.identity_verification import IdentityVerification, VerificationType, VerificationStatus
+        
+        # Check if an identity verification already exists
+        existing_verification_result = await self.db.execute(
+            select(IdentityVerification).where(
+                IdentityVerification.user_id == guide.user_id,
+                IdentityVerification.status.in_([VerificationStatus.PENDING, VerificationStatus.IN_REVIEW])
+            )
+        )
+        existing_verification = existing_verification_result.scalar_one_or_none()
+        
+        if not existing_verification:
+            identity_verification = IdentityVerification(
+                user_id=guide.user_id,
+                verification_type=VerificationType.DIRCETUR_LICENSE,
+                status=VerificationStatus.PENDING,
+                selfie_url=guide.selfie_image_url,
+                document_url=guide.dircetur_front_image_url,
+                license_number=guide.dircetur_id,
+                biometric_hash=data.get("biometric_hash"),
+                device_signature=data.get("device_signature"),
+            )
+            self.db.add(identity_verification)
+
+        await self.db.flush()
+        await self.db.refresh(guide)
+        logger.info(f"Guide verification submitted | ID: {guide_id}")
+        return guide
+
+    async def get_verification_status(self, guide_id: uuid.UUID) -> dict:
+        """Get guide verification status."""
+        guide = await self.get_guide(guide_id)
+        return {
+            "status": guide.verification_status.value,
+            "documents": {
+                "dircetur_front": bool(guide.dircetur_front_image_url),
+                "dircetur_back": bool(guide.dircetur_back_image_url),
+                "selfie": bool(guide.selfie_image_url),
+                "biometric": guide.biometric_verified,
+            },
+            "rejection_reason": guide.verification_notes if guide.verification_status == GuideVerificationStatus.REJECTED else None,
+        }
+    
     async def get_available_guides(
         self,
         agency_id: Optional[uuid.UUID] = None,

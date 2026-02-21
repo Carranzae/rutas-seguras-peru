@@ -262,17 +262,25 @@ class IdentityVerificationService:
         if user:
             user.is_verified = True
         
-        # If guide, update biometric verification status
+        # If guide, update biometric verification status and overall verification status
         if verification.verification_type in (
             VerificationType.BIOMETRIC_FINGERPRINT,
             VerificationType.BIOMETRIC_FACE,
+            VerificationType.DIRCETUR_LICENSE,
         ):
+            from app.models.guide import GuideVerificationStatus
             guide_result = await db.execute(
                 select(Guide).where(Guide.user_id == verification.user_id)
             )
             guide = guide_result.scalar_one_or_none()
             if guide:
-                guide.biometric_verified = True
+                if verification.verification_type != VerificationType.DIRCETUR_LICENSE:
+                    guide.biometric_verified = True
+                
+                # If they were pending review for the whole profile, approve them
+                if guide.verification_status == GuideVerificationStatus.PENDING_REVIEW or verification.verification_type == VerificationType.DIRCETUR_LICENSE:
+                    guide.verification_status = GuideVerificationStatus.VERIFIED
+                    guide.is_active = True
         
         # Audit log
         await create_audit_log(
@@ -327,6 +335,22 @@ class IdentityVerificationService:
         verification.reviewed_at = datetime.utcnow()
         verification.rejection_reason = rejection_reason
         
+        # If it's a guide verification, also update the guide status
+        if verification.verification_type in (
+            VerificationType.BIOMETRIC_FINGERPRINT,
+            VerificationType.BIOMETRIC_FACE,
+            VerificationType.DIRCETUR_LICENSE,
+        ):
+            from app.models.guide import GuideVerificationStatus
+            guide_result = await db.execute(
+                select(Guide).where(Guide.user_id == verification.user_id)
+            )
+            guide = guide_result.scalar_one_or_none()
+            if guide:
+                guide.verification_status = GuideVerificationStatus.REJECTED
+                guide.verification_notes = rejection_reason
+                guide.is_active = False
+
         # Audit log
         await create_audit_log(
             db=db,

@@ -46,6 +46,7 @@ export default function GuideDashboard() {
         { id: 'map', icon: '📍', title: 'Mapa en Vivo', subtitle: 'Mi ubicación', color: '#10b981', route: '/(guide)/live-tracking' },
         { id: 'group', icon: '👥', title: 'Mi Grupo', subtitle: 'Turistas', color: '#f59e0b', route: '/(guide)/group' },
         { id: 'report', icon: '📊', title: 'Reportes', subtitle: 'Mis tours', color: '#3b82f6', route: '/(guide)/report' },
+        { id: 'earnings', icon: '💰', title: 'Ganancias', subtitle: 'Mis ingresos', color: '#059669', route: '/(guide)/earnings' },
     ];
 
     // Load user data and tours

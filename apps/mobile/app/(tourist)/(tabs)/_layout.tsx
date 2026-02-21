@@ -13,6 +13,7 @@ const TabIcon = ({ name, focused }: { name: string; focused: boolean }) => {
         map: { active: 'map', inactive: 'map-outline' },
         bookings: { active: 'calendar', inactive: 'calendar-outline' },
         profile: { active: 'person-circle', inactive: 'person-circle-outline' },
+        translator: { active: 'language', inactive: 'language-outline' },
     };
 
     const iconSet = icons[name] || { active: 'ellipse', inactive: 'ellipse-outline' };
@@ -59,6 +60,13 @@ export default function TouristTabLayout() {
                 options={{
                     title: 'Mapa',
                     tabBarIcon: ({ focused }) => <TabIcon name="map" focused={focused} />,
+                }}
+            />
+            <Tabs.Screen
+                name="translator"
+                options={{
+                    title: 'Traductor',
+                    tabBarIcon: ({ focused }) => <TabIcon name="translator" focused={focused} />,
                 }}
             />
             <Tabs.Screen

@@ -14,6 +14,8 @@ from app.models.user import UserRole
 from app.models.guide import GuideVerificationStatus
 from pydantic import BaseModel, Field
 from datetime import datetime
+from fastapi import UploadFile, File, Form
+from app.routers.uploads import save_file, validate_file, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE
 
 router = APIRouter(prefix="/guides", tags=["Guides"])
 
@@ -234,6 +236,97 @@ async def verify_dircetur(
         verification_notes=notes,
     )
     return _guide_to_response(guide)
+
+
+@router.post(
+    "/{guide_id}/documents",
+    response_model=dict,
+    summary="Upload guide document",
+)
+async def upload_guide_document(
+    guide_id: uuid.UUID,
+    file: UploadFile = File(...),
+    document_type: str = Form(...),
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Upload a document for a guide."""
+    service = GuideService(db)
+    # Ensure guide exists
+    guide = await service.get_guide(guide_id)
+    
+    validate_file(file, ALLOWED_IMAGE_TYPES, MAX_IMAGE_SIZE)
+    
+    # Save file
+    subdir = f"guides/{guide_id}/{document_type}"
+    url = save_file(file, subdir)
+    
+    # Update guide document URL
+    if document_type == "dircetur_front":
+        guide.dircetur_front_image_url = url
+    elif document_type == "dircetur_back":
+        guide.dircetur_back_image_url = url
+    elif document_type == "selfie":
+        guide.selfie_image_url = url
+        
+    await db.commit()
+    
+    return {"url": url}
+
+@router.post(
+    "/{guide_id}/verify-biometric",
+    response_model=dict,
+    summary="Verify biometric data",
+)
+async def verify_biometric_data(
+    guide_id: uuid.UUID,
+    data: dict,
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verify biometric data for a guide."""
+    service = GuideService(db)
+    guide = await service.verify_biometric(
+        guide_id=guide_id,
+        biometric_data=data,
+    )
+    await db.commit()
+    return {"status": "success"}
+
+@router.post(
+    "/{guide_id}/submit-verification",
+    response_model=GuideResponse,
+    summary="Submit complete verification",
+)
+async def submit_verification(
+    guide_id: uuid.UUID,
+    data: dict,
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Submit guide verification."""
+    service = GuideService(db)
+    guide = await service.submit_verification(
+        guide_id=guide_id,
+        data=data,
+    )
+    await db.commit()
+    return _guide_to_response(guide)
+
+@router.get(
+    "/{guide_id}/verification-status",
+    response_model=dict,
+    summary="Get verification status",
+)
+async def get_verification_status(
+    guide_id: uuid.UUID,
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Get guide verification status."""
+    service = GuideService(db)
+    status = await service.get_verification_status(guide_id)
+    return status
 
 @router.get(
     "/me/stats",

@@ -103,7 +103,7 @@ class VerificationService {
         data: VerificationData
     ): Promise<GuideProfile> {
         const response = await httpClient.post<GuideProfile>(
-            ENDPOINTS.GUIDES.VERIFY_DIRCETUR(guideId),
+            ENDPOINTS.GUIDES.SUBMIT_VERIFICATION(guideId),
             {
                 dircetur_front_url: data.dircetur_front_photo,
                 dircetur_back_url: data.dircetur_back_photo,

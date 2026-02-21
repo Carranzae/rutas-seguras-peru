@@ -36,6 +36,11 @@
       },
       "package": "com.rutaseguraperu.app",
       "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD-PLACEHOLDER-UPDATE-WITH-REAL-KEY"
+        }
+      },
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",

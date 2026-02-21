@@ -60,6 +60,7 @@ export const ENDPOINTS = {
         CREATE: '/guides',
         UPDATE: (id: string) => `/guides/${id}`,
         VERIFY_DIRCETUR: (id: string) => `/guides/${id}/verify-dircetur`,
+        SUBMIT_VERIFICATION: (id: string) => `/guides/${id}/submit-verification`,
         VERIFY_BIOMETRIC: (id: string) => `/guides/${id}/verify-biometric`,
     },
 

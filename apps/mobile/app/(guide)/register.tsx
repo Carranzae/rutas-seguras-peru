@@ -182,9 +182,9 @@ export default function GuideRegistrationScreen() {
 
     // Get API URL helper
     const getApiUrl = async () => {
-        // This would come from config
         return API_CONFIG.BASE_URL + API_CONFIG.API_VERSION;
     };
+
 
     // Submit complete registration
     const submitRegistration = async () => {
@@ -227,7 +227,18 @@ export default function GuideRegistrationScreen() {
                 token_type: 'bearer',
             });
 
-            // 3. Upload documents (TODO: in production, upload to S3/cloud)
+            // 3. Create Guide Profile (Critical Step)
+            // The user exists, but we must create the guide entity before adding verifications
+            await httpClient.post('/guides', {
+                dircetur_code: guideData.dircetur_license, // Use license as code initially
+                license_number: guideData.dircetur_license,
+                years_experience: parseInt(guideData.experience_years) || 0,
+                specialties: guideData.specialties.split(',').map(s => s.trim()),
+                bio: 'Guía registrado desde la app móvil',
+                languages: ['es'], // Default
+            });
+
+            // 4. Upload documents (TODO: in production, upload to S3/cloud)
             const dniUrl = dniPhoto;
             const certUrl = certificatePhoto;
             const selfieUrl = selfiePhoto;

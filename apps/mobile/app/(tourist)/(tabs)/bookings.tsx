@@ -67,6 +67,17 @@ export default function BookingsScreen() {
         }
     };
 
+    const handleReview = (booking: Booking) => {
+        router.push({
+            pathname: '/(tourist)/reviews',
+            params: {
+                tour_id: booking.tour_id,
+                tour_name: booking.tour_name,
+                guide_name: booking.guide_name,
+            },
+        } as any);
+    };
+
     const StatusBadge = ({ status, guideStatus }: { status: string, guideStatus?: string }) => {
         if (guideStatus === 'assigned_waiting_approval') {
             return (
@@ -131,6 +142,16 @@ export default function BookingsScreen() {
                 <View style={styles.actionFooter}>
                     <Text style={styles.actionText}>¡Se te ha asignado un guía! Toca para revisar.</Text>
                 </View>
+            )}
+
+            {item.status === 'completed' && (
+                <TouchableOpacity
+                    style={styles.reviewFooter}
+                    onPress={() => handleReview(item)}
+                >
+                    <Ionicons name="star-outline" size={16} color="#fbbf24" />
+                    <Text style={styles.reviewText}>Dejar una reseña</Text>
+                </TouchableOpacity>
             )}
         </TouchableOpacity>
     );
@@ -199,6 +220,9 @@ const styles = StyleSheet.create({
 
     actionFooter: { backgroundColor: 'rgba(17, 82, 212, 0.05)', padding: Spacing.sm, alignItems: 'center' },
     actionText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+
+    reviewFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: 'rgba(251, 191, 36, 0.08)', padding: Spacing.sm },
+    reviewText: { fontSize: 13, color: '#d97706', fontWeight: '600' },
 
     emptyState: { alignItems: 'center', marginTop: 100 },
     emptyEmoji: { fontSize: 48, marginBottom: 16 },
