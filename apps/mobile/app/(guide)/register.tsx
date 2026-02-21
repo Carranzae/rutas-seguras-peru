@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
     instructionItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
     instructionText: { color: '#FFF', fontSize: 14, marginLeft: 12 },
 
-    captureArea: { backgroundColor: 'rgba(17,82,212,0.15)', borderRadius: 16, borderWidth: 2, borderColor: '#1152d4', borderStyle: 'dashed', padding: 40, alignItems: 'center', marginBottom: 24 },
+    captureArea: { backgroundColor: 'rgba(17,82,212,0.15)', borderRadius: 16, borderWidth: 2, borderColor: '#1152d4', padding: 40, alignItems: 'center', marginBottom: 24 },
     captureIcon: { marginBottom: 16 },
     captureText: { color: '#1152d4', fontSize: 16, fontWeight: '600' },
 
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     licenseInfoText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
 
     selfieArea: { alignItems: 'center', marginBottom: 24 },
-    selfieOval: { width: 160, height: 200, borderRadius: 80, borderWidth: 3, borderColor: '#1152d4', borderStyle: 'dashed', marginBottom: 16 },
+    selfieOval: { width: 160, height: 200, borderRadius: 80, borderWidth: 3, borderColor: '#1152d4', marginBottom: 16 },
     selfieText: { color: '#8E8E93', fontSize: 14 },
     selfiePreview: { alignItems: 'center', marginBottom: 24 },
     selfieImage: { width: 160, height: 160, borderRadius: 80, marginBottom: 12 },

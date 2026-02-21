@@ -2,6 +2,7 @@
  * Ruta Segura Perú - Tourist Map Screen
  * Interactive map with tour locations and guide tracking using react-native-maps
  */
+import { Map3DComponent, Map3DComponentRef } from '@/src/components/common/Map3DComponent';
 import { BorderRadius, Colors, Shadows, Spacing } from '@/src/constants/theme';
 import { API_CONFIG, httpClient } from '@/src/core/api';
 import { useLanguage } from '@/src/i18n';
@@ -20,7 +21,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, Region, UrlTile } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface NearbyTour {
@@ -58,7 +58,7 @@ const CATEGORY_MARKERS: Record<string, string> = {
 
 export default function MapScreen() {
     const { t, language } = useLanguage();
-    const mapRef = useRef<MapView>(null);
+    const mapRef = useRef<Map3DComponentRef>(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchFocused, setSearchFocused] = useState(false);
@@ -259,12 +259,7 @@ export default function MapScreen() {
     const handleTourPress = (tour: NearbyTour) => {
         setSelectedTour(tour);
         if (tour.latitude && tour.longitude) {
-            mapRef.current?.animateToRegion({
-                latitude: tour.latitude,
-                longitude: tour.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            }, 500);
+            mapRef.current?.flyTo(tour.latitude, tour.longitude, 16, 60);
         }
     };
 
@@ -277,12 +272,7 @@ export default function MapScreen() {
 
     const centerOnUser = () => {
         if (currentLocation) {
-            mapRef.current?.animateToRegion({
-                latitude: currentLocation.lat,
-                longitude: currentLocation.lng,
-                latitudeDelta: 0.02,
-                longitudeDelta: 0.02,
-            }, 500);
+            mapRef.current?.flyTo(currentLocation.lat, currentLocation.lng, 15, 60);
         }
     };
 
@@ -310,75 +300,26 @@ export default function MapScreen() {
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Map */}
             <View style={styles.mapContainer}>
-                <MapView
+                <Map3DComponent
                     ref={mapRef}
-                    style={styles.map}
-                    provider={PROVIDER_DEFAULT}
-                    initialRegion={region}
-                    showsUserLocation
-                    showsMyLocationButton={false}
-                    showsCompass
-                    rotateEnabled
-                    onRegionChangeComplete={setRegion}
-                >
-                    {/* CartoDB Voyager Tiles @2x for retina */}
-                    <UrlTile
-                        urlTemplate={MAP_TILE_URL}
-                        maximumZ={19}
-                        flipY={false}
-                    />
-
-                    {/* Tour Markers */}
-                    {nearbyTours.map((tour) => (
-                        <Marker
-                            key={tour.id}
-                            coordinate={{
-                                latitude: tour.latitude,
-                                longitude: tour.longitude,
-                            }}
-                            title={tour.name}
-                            description={`S/${tour.price} • ⭐ ${tour.rating}${tour.duration_hours ? ` • ${tour.duration_hours}h` : ''}`}
-                            onPress={() => handleTourPress(tour)}
-                        >
-                            <View style={styles.markerContainer}>
-                                <View style={[
-                                    styles.marker,
-                                    selectedTour?.id === tour.id && styles.markerSelected
-                                ]}>
-                                    <Text style={styles.markerText}>{getMarkerEmoji(tour.category)}</Text>
-                                </View>
-                                {selectedTour?.id === tour.id && (
-                                    <View style={styles.markerPriceTag}>
-                                        <Text style={styles.markerPriceText}>S/{tour.price}</Text>
-                                    </View>
-                                )}
-                                <View style={[
-                                    styles.markerArrow,
-                                    selectedTour?.id === tour.id && styles.markerArrowSelected
-                                ]} />
-                            </View>
-                        </Marker>
-                    ))}
-
-                    {/* Guide Location Marker (when tracking) */}
-                    {guideLocation && (
-                        <Marker
-                            coordinate={{
-                                latitude: guideLocation.latitude,
-                                longitude: guideLocation.longitude,
-                            }}
-                            title={guideLocation.name}
-                            description={language === 'es' ? 'Tu guía — En vivo' : 'Your guide — Live'}
-                        >
-                            <View style={styles.guideMarkerOuter}>
-                                <View style={styles.guideMarkerPulse} />
-                                <View style={styles.guideMarker}>
-                                    <Ionicons name="person" size={18} color="#fff" />
-                                </View>
-                            </View>
-                        </Marker>
-                    )}
-                </MapView>
+                    initialLat={region.latitude}
+                    initialLng={region.longitude}
+                    enable3DBuildings={true}
+                    pitch={60}
+                    guideLocation={guideLocation ? { lat: guideLocation.latitude, lng: guideLocation.longitude } : null}
+                    markers={nearbyTours.map(t => ({
+                        id: t.id,
+                        latitude: t.latitude,
+                        longitude: t.longitude,
+                        title: t.name,
+                        icon: getMarkerEmoji(t.category),
+                        color: selectedTour?.id === t.id ? '#10b981' : '#1152d4'
+                    }))}
+                    onMarkerPress={(id) => {
+                        const tour = nearbyTours.find(t => t.id === id);
+                        if (tour) handleTourPress(tour);
+                    }}
+                />
 
                 {/* Search Bar */}
                 <View style={styles.searchBar}>
@@ -416,11 +357,7 @@ export default function MapScreen() {
                         <TouchableOpacity
                             style={styles.zoomButton}
                             onPress={() => {
-                                mapRef.current?.animateToRegion({
-                                    ...region,
-                                    latitudeDelta: region.latitudeDelta / 2,
-                                    longitudeDelta: region.longitudeDelta / 2,
-                                }, 300);
+                                if (currentLocation) mapRef.current?.flyTo(currentLocation.lat, currentLocation.lng, 17);
                             }}
                         >
                             <Ionicons name="add" size={22} color={Colors.textPrimary} />
@@ -429,11 +366,7 @@ export default function MapScreen() {
                         <TouchableOpacity
                             style={styles.zoomButton}
                             onPress={() => {
-                                mapRef.current?.animateToRegion({
-                                    ...region,
-                                    latitudeDelta: region.latitudeDelta * 2,
-                                    longitudeDelta: region.longitudeDelta * 2,
-                                }, 300);
+                                if (currentLocation) mapRef.current?.flyTo(currentLocation.lat, currentLocation.lng, 13);
                             }}
                         >
                             <Ionicons name="remove" size={22} color={Colors.textPrimary} />
@@ -516,12 +449,12 @@ export default function MapScreen() {
                     <TouchableOpacity
                         style={styles.guideTracker}
                         onPress={() => {
-                            mapRef.current?.animateToRegion({
-                                latitude: guideLocation.latitude,
-                                longitude: guideLocation.longitude,
-                                latitudeDelta: 0.005,
-                                longitudeDelta: 0.005,
-                            }, 500);
+                            mapRef.current?.flyTo(
+                                guideLocation.latitude,
+                                guideLocation.longitude,
+                                18,
+                                75
+                            );
                         }}
                     >
                         <View style={styles.guideTrackerContent}>
