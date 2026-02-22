@@ -111,6 +111,9 @@ class GuideService:
         await self.db.commit()
         await self.db.refresh(guide)
         
+        # Explicitly assign the user relationship to prevent lazy-load greenlet errors during serialization
+        guide.user = user
+        
         logger.info(f"Public Guide registered pending review | User: {user.email}")
         return guide
     
