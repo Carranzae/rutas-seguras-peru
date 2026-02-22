@@ -15,8 +15,6 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.database import init_db, close_db
-from app.db.session import engine
-from sqlalchemy import text
 from app.middleware import LoggingMiddleware, limiter, JWTBlacklistMiddleware
 from app.services.redis_service import redis_service
 from app.routers import (
@@ -215,6 +213,9 @@ async def run_system_migration(key: str = ""):
         return {"error": "Unauthorized key"}
     
     try:
+        from app.db.session import engine
+        from sqlalchemy import text
+        
         async with engine.begin() as conn:
             await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS nationality VARCHAR;"))
             await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS residence_city VARCHAR;"))
