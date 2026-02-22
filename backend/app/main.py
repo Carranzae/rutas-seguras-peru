@@ -216,14 +216,28 @@ async def run_system_migration(key: str = ""):
         from app.database import engine
         from sqlalchemy import text
         
-        async with engine.begin() as conn:
+        async with engine.connect() as conn:
             await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS nationality VARCHAR;"))
             await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS residence_city VARCHAR;"))
             await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS department VARCHAR;"))
-        return {"status": "success", "message": "Columns added."}
+            await conn.commit()
+        return {"status": "success", "message": "Columns added and explicitly committed."}
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/v1/system/check-db", tags=["System"])
+async def check_system_db(key: str = ""):
+    if key != "fix-db-2026": return {"error": "Unauthorized key"}
+    try:
+        from app.database import engine
+        from sqlalchemy import text
+        
+        async with engine.begin() as conn:
+            result = await conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'guides';"))
+            columns = [row[0] for row in result.fetchall()]
+        return {"table": "guides", "columns": columns}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/", tags=["Root"])
 async def root():
