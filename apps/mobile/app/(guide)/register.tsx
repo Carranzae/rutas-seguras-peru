@@ -5,9 +5,10 @@
 import { API_CONFIG, httpClient } from '@/src/core/api';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import * as LocalAuthentication from 'expo-local-authentication';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -50,6 +51,7 @@ interface VerificationResponse {
 
 export default function GuideRegistrationScreen() {
     const router = useRouter();
+    const params = useLocalSearchParams<{ name?: string, email?: string, phone?: string, password?: string }>();
     // Receive params from auth/register screen
     const [step, setStep] = useState<RegistrationStep>('personal');
     const [loading, setLoading] = useState(false);
@@ -69,6 +71,9 @@ export default function GuideRegistrationScreen() {
         residence_city: '',
         department: '',
     });
+
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [dateObj, setDateObj] = useState(new Date(1990, 0, 1));
 
     // Initialize form with params from auth/register screen
     useEffect(() => {
@@ -336,15 +341,33 @@ export default function GuideRegistrationScreen() {
 
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Fecha de nacimiento *</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={guideData.birth_date}
-                        onChangeText={(t) => setGuideData({ ...guideData, birth_date: t })}
-                        placeholder="DD/MM/AAAA"
-                        placeholderTextColor="#666"
-                        keyboardType="numeric"
-                        maxLength={10}
-                    />
+                    <TouchableOpacity
+                        style={[styles.input, styles.dateInput]}
+                        onPress={() => setShowDatePicker(true)}
+                    >
+                        <Text style={{ color: guideData.birth_date ? '#FFF' : '#666' }}>
+                            {guideData.birth_date || "Seleccionar fecha (DD/MM/AAAA)"}
+                        </Text>
+                        <Ionicons name="calendar-outline" size={20} color="#666" />
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={dateObj}
+                            mode="date"
+                            display="spinner"
+                            maximumDate={new Date(2006, 11, 31)} // Must be at least 18
+                            onChange={(event, selectedDate) => {
+                                setShowDatePicker(false);
+                                if (selectedDate) {
+                                    setDateObj(selectedDate);
+                                    const day = selectedDate.getDate().toString().padStart(2, '0');
+                                    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+                                    const year = selectedDate.getFullYear();
+                                    setGuideData({ ...guideData, birth_date: `${year}-${month}-${day}` });
+                                }
+                            }}
+                        />
+                    )}
                 </View>
 
                 <View style={styles.inputGroup}>
@@ -384,50 +407,52 @@ export default function GuideRegistrationScreen() {
                     />
                 </View>
 
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Nacionalidad *</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={guideData.nationality}
-                        onChangeText={(t) => setGuideData({ ...guideData, nationality: t })}
-                        placeholder="Peruana"
-                        placeholderTextColor="#666"
-                    />
+                <View style={styles.row}>
+                    <View style={[styles.inputGroup, { flex: 1, paddingRight: 8 }]}>
+                        <Text style={styles.label}>Nacionalidad *</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={guideData.nationality}
+                            onChangeText={(t) => setGuideData({ ...guideData, nationality: t })}
+                            placeholder="Ej. Peruana"
+                            placeholderTextColor="#666"
+                        />
+                    </View>
+                    <View style={[styles.inputGroup, { flex: 1, paddingLeft: 8 }]}>
+                        <Text style={styles.label}>Residencia Actual *</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={guideData.residence_city}
+                            onChangeText={(t) => setGuideData({ ...guideData, residence_city: t })}
+                            placeholder="Ej. Cusco"
+                            placeholderTextColor="#666"
+                        />
+                    </View>
                 </View>
 
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Lugar donde vive (Ciudad) *</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={guideData.residence_city}
-                        onChangeText={(t) => setGuideData({ ...guideData, residence_city: t })}
-                        placeholder="Cusco"
-                        placeholderTextColor="#666"
-                    />
-                </View>
-
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Departamento para el que se registra *</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={guideData.department}
-                        onChangeText={(t) => setGuideData({ ...guideData, department: t })}
-                        placeholder="Cusco"
-                        placeholderTextColor="#666"
-                    />
-                </View>
-
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Años de experiencia</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={guideData.experience_years}
-                        onChangeText={(t) => setGuideData({ ...guideData, experience_years: t })}
-                        placeholder="5"
-                        placeholderTextColor="#666"
-                        keyboardType="numeric"
-                        maxLength={2}
-                    />
+                <View style={styles.row}>
+                    <View style={[styles.inputGroup, { flex: 1, paddingRight: 8 }]}>
+                        <Text style={styles.label}>Departamento de labor *</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={guideData.department}
+                            onChangeText={(t) => setGuideData({ ...guideData, department: t })}
+                            placeholder="Ej. Cusco"
+                            placeholderTextColor="#666"
+                        />
+                    </View>
+                    <View style={[styles.inputGroup, { flex: 1, paddingLeft: 8 }]}>
+                        <Text style={styles.label}>Años exp.</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={guideData.experience_years}
+                            onChangeText={(t) => setGuideData({ ...guideData, experience_years: t })}
+                            placeholder="Ej. 5"
+                            placeholderTextColor="#666"
+                            keyboardType="numeric"
+                            maxLength={2}
+                        />
+                    </View>
                 </View>
 
                 <View style={styles.inputGroup}>
@@ -793,8 +818,10 @@ const styles = StyleSheet.create({
 
     form: { marginBottom: 24 },
     inputGroup: { marginBottom: 16 },
+    row: { flexDirection: 'row', justifyContent: 'space-between' },
     label: { fontSize: 14, fontWeight: '600', color: '#FFF', marginBottom: 8 },
     input: { backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12, padding: 14, fontSize: 16, color: '#FFF', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+    dateInput: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     textArea: { height: 80, textAlignVertical: 'top' },
 
     documentInstructions: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 16, marginBottom: 24 },
