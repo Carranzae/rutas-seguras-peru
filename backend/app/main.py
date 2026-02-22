@@ -15,6 +15,8 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.database import init_db, close_db
+from app.db.session import engine
+from sqlalchemy import text
 from app.middleware import LoggingMiddleware, limiter, JWTBlacklistMiddleware
 from app.services.redis_service import redis_service
 from app.routers import (
@@ -205,6 +207,21 @@ async def health_check():
         "version": "1.0.0",
         "environment": settings.app_env,
     }
+
+@app.get("/api/v1/system/run-migration", tags=["System"])
+async def run_system_migration(key: str = ""):
+    """Manual migration injection point for Railway."""
+    if key != "fix-db-2026":
+        return {"error": "Unauthorized key"}
+    
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS nationality VARCHAR;"))
+            await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS residence_city VARCHAR;"))
+            await conn.execute(text("ALTER TABLE guides ADD COLUMN IF NOT EXISTS department VARCHAR;"))
+        return {"status": "success", "message": "Columns added."}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/", tags=["Root"])
