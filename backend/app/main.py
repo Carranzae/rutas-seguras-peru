@@ -213,7 +213,7 @@ async def run_system_migration(key: str = ""):
         return {"error": "Unauthorized key"}
     
     try:
-        from app.db.session import engine
+        from app.database import engine
         from sqlalchemy import text
         
         async with engine.begin() as conn:
