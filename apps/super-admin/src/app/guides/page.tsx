@@ -166,9 +166,9 @@ export default function GuidesPage() {
                                                 <span className="text-2xl">👤</span>
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-white">{guide.user?.full_name || 'Sin nombre'}</h3>
-                                                <p className="text-gray-400">{guide.user?.email || 'Sin email'}</p>
-                                                <p className="text-gray-500 text-sm">{guide.user?.phone || 'Sin teléfono'}</p>
+                                                <h3 className="text-xl font-bold text-white">{guide.full_name || 'Sin nombre'}</h3>
+                                                <p className="text-gray-400">{guide.email || 'Sin email'}</p>
+                                                <p className="text-gray-500 text-sm">{guide.phone || 'Sin teléfono'}</p>
                                             </div>
                                         </div>
                                         <span className={`px-3 py-1 rounded-full text-sm border ${statusLabels[guide.verification_status.toLowerCase()]?.color || statusLabels.pending_review.color}`}>
@@ -183,7 +183,7 @@ export default function GuidesPage() {
                                         </div>
                                         <div>
                                             <p className="text-gray-400 text-sm">Idiomas</p>
-                                            <p className="text-white">{Array.isArray(guide.specialty) ? guide.specialty.join(', ') : guide.specialty || 'N/A'}</p>
+                                            <p className="text-white">{Array.isArray(guide.languages) ? guide.languages.join(', ') : 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-gray-400 text-sm">Experiencia</p>
@@ -233,8 +233,8 @@ export default function GuidesPage() {
                                     <span className="text-2xl">👤</span>
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white">{selectedGuide.user?.full_name}</h2>
-                                    <p className="text-gray-400">{selectedGuide.user?.email}</p>
+                                    <h2 className="text-2xl font-bold text-white">{selectedGuide.full_name || 'Sin nombre'}</h2>
+                                    <p className="text-gray-400">{selectedGuide.email || 'Sin email'}</p>
                                 </div>
                             </div>
                             <button onClick={() => setSelectedGuide(null)} className="text-gray-400 hover:text-white text-2xl">&times;</button>
@@ -256,7 +256,7 @@ export default function GuidesPage() {
 
                             <div>
                                 <p className="text-gray-400 text-sm">Teléfono</p>
-                                <p className="text-white">{selectedGuide.user?.phone || 'No registrado'}</p>
+                                <p className="text-white">{selectedGuide.phone || 'No registrado'}</p>
                             </div>
 
                             <div>

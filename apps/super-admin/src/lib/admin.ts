@@ -31,15 +31,14 @@ export interface Guide {
     id: string;
     user_id: string;
     dircetur_id: string;
-    specialty: string;
+    languages: string[];
+    specializations: string[];
     experience_years: number;
     verification_status: string;
     is_active: boolean;
-    user?: {
-        full_name: string;
-        email: string;
-        phone: string;
-    };
+    full_name?: string;
+    email?: string;
+    phone?: string;
 }
 
 export interface Booking {

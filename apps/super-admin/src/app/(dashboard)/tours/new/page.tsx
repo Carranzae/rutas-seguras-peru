@@ -1,5 +1,6 @@
 'use client';
 
+import { getApiUrl } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -55,7 +56,7 @@ export default function NewTourPage() {
                 included_services: form.included_services,
             };
 
-            const response = await fetch('/api/v1/tours', {
+            const response = await fetch(getApiUrl('/tours'), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -78,7 +79,7 @@ export default function NewTourPage() {
                 coverFormData.append('file', form.images[0]);
                 coverFormData.append('category', 'tour_cover');
 
-                const coverResponse = await fetch(`/api/v1/uploads/tour/${createdTour.id}/cover`, {
+                const coverResponse = await fetch(getApiUrl(`/uploads/tour/${createdTour.id}/cover`), {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -97,7 +98,7 @@ export default function NewTourPage() {
                         galleryFormData.append('files', form.images[i]);
                     }
 
-                    const galleryResponse = await fetch(`/api/v1/uploads/tour/${createdTour.id}/gallery`, {
+                    const galleryResponse = await fetch(getApiUrl(`/uploads/tour/${createdTour.id}/gallery`), {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
