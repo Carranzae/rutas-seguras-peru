@@ -1,7 +1,7 @@
 'use client';
 
 import { MapControls, MapMarker, Map as MapView } from '@/components/ui/map';
-import { getAuthToken } from '@/lib/api';
+import { API_BASE_URL, getAuthToken } from '@/lib/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -138,7 +138,9 @@ export default function TrackingPage() {
             return;
         }
 
-        const wsUrl = `ws://localhost:8000/api/v1/ws/admin?token=${token}`;
+        const wsProtocol = API_BASE_URL.startsWith('https') ? 'wss://' : 'ws://';
+        const wsHost = API_BASE_URL.replace('https://', '').replace('http://', '');
+        const wsUrl = `${wsProtocol}${wsHost}/api/v1/ws/admin?token=${token}`;
         const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {

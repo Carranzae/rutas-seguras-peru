@@ -45,6 +45,9 @@ class TourUpdate(BaseModel):
     meeting_point: Optional[str] = None
     included_services: Optional[List[str]] = None
     guide_id: Optional[UUID] = None
+    cover_image_url: Optional[str] = None
+    gallery_urls: Optional[List[str]] = None
+    is_featured: Optional[bool] = None
 
 
 class TourResponse(TourBase):
