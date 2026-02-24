@@ -100,4 +100,9 @@ export const ENDPOINTS = {
 
     // Tracking
     TRACKING_LIVE: '/tracking/live',
+
+    // Ghoscloud
+    GHOSCLOUD_DNI: (dni: string) => `/ghoscloud/dni/${dni}`,
+    GHOSCLOUD_BACKGROUND: (id: string, type: string = 'DNI') => `/ghoscloud/background/${id}?document_type=${type}`,
+    GHOSCLOUD_PHONE: (phone: string) => `/ghoscloud/phone/${phone}`,
 };

@@ -15,6 +15,7 @@ from app.routers.emergency_contacts import router as emergency_contacts_router
 from app.routers.public_tracking import router as public_tracking_router
 from app.routers.uploads import router as uploads_router
 from app.routers.izipay import router as izipay_router
+from app.routers.ghoscloud import router as ghoscloud_router
 from app.routers import websocket
 
 __all__ = [
@@ -34,6 +35,7 @@ __all__ = [
     "public_tracking_router",
     "uploads_router",
     "izipay_router",
+    "ghoscloud_router",
     "websocket",
 ]
 

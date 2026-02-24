@@ -33,6 +33,7 @@ from app.routers import (
     emergency_contacts_router,
     public_tracking_router,
     uploads_router,
+    ghoscloud_router,
     public_tracking_router,
     websocket as websocket_router,
 )
@@ -170,6 +171,7 @@ app.include_router(identity_verification_router, prefix=settings.api_v1_prefix)
 app.include_router(emergency_contacts_router, prefix=settings.api_v1_prefix)
 app.include_router(public_tracking_router, prefix=settings.api_v1_prefix)
 app.include_router(uploads_router, prefix=settings.api_v1_prefix)
+app.include_router(ghoscloud_router, prefix=settings.api_v1_prefix)
 app.include_router(websocket_router.router, prefix=settings.api_v1_prefix)
 app.include_router(ai_router.router, prefix=settings.api_v1_prefix)
 app.include_router(notifications_router.router, prefix=settings.api_v1_prefix)

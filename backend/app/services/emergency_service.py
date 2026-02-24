@@ -98,7 +98,7 @@ class EmergencyService:
         }
         
         # Get emergency contacts
-        contacts = self._get_emergency_contacts(user)
+        contacts = await self._get_emergency_contacts(user)
         
         # Run notifications concurrently
         try:
@@ -157,7 +157,7 @@ class EmergencyService:
         
         return results
     
-    def _get_emergency_contacts(self, user: User) -> dict:
+    async def _get_emergency_contacts(self, user: User) -> dict:
         """Get emergency contacts for a user."""
         contacts = {
             "sms_numbers": [],
@@ -174,8 +174,21 @@ class EmergencyService:
         if user.phone:
             contacts["sms_numbers"].append(user.phone)
         
-        # TODO: Get guide/agency contacts if on tour
-        # TODO: Get admin FCM tokens for push
+        # Query Super Admins to receive calls and pushes
+        from app.models.user import UserRole
+        admin_result = await self.db.execute(select(User).where(User.role == UserRole.SUPER_ADMIN))
+        admins = admin_result.scalars().all()
+        
+        for admin in admins:
+            if admin.phone and admin.phone not in contacts["sms_numbers"]:
+                # The first admin with a phone number will receive the Voice Call fallback if the user had no emergency contact
+                if not contacts["call_number"]:
+                    contacts["call_number"] = admin.phone
+                else:
+                    contacts["sms_numbers"].append(admin.phone)
+            
+            # Here we would collect FCM tokens if we stored them in the User model
+            # e.g., if admin.fcm_token: contacts["fcm_tokens"].append(admin.fcm_token)
         
         return contacts
     

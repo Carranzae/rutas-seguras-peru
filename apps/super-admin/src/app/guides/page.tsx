@@ -15,6 +15,26 @@ export default function GuidesPage() {
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
 
+    // Ghoscloud Verification States
+    const [ghoscloudData, setGhoscloudData] = useState<any>(null);
+    const [verifyingBackground, setVerifyingBackground] = useState(false);
+    const [docNumberOverride, setDocNumberOverride] = useState('');
+
+    const handleGhoscloudVerification = async (dni: string) => {
+        setVerifyingBackground(true);
+        setGhoscloudData(null);
+        try {
+            const actualDni = docNumberOverride.trim() || dni;
+            const result = await adminService.verifyBackground(actualDni, 'DNI');
+            setGhoscloudData(result.data || result);
+        } catch (err: any) {
+            console.error(err);
+            setGhoscloudData({ error: err.message || 'Error consultando Ghoscloud' });
+        } finally {
+            setVerifyingBackground(false);
+        }
+    };
+
     // Load guides wrapped in callback
     const loadGuides = useCallback(async () => {
         setLoading(true);
@@ -237,7 +257,11 @@ export default function GuidesPage() {
                                     <p className="text-gray-400">{selectedGuide.email || 'Sin email'}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setSelectedGuide(null)} className="text-gray-400 hover:text-white text-2xl">&times;</button>
+                            <button onClick={() => {
+                                setSelectedGuide(null);
+                                setGhoscloudData(null);
+                                setDocNumberOverride('');
+                            }} className="text-gray-400 hover:text-white text-2xl">&times;</button>
                         </div>
 
                         <div className="space-y-4">
@@ -262,6 +286,49 @@ export default function GuidesPage() {
                             <div>
                                 <p className="text-gray-400 text-sm">Experiencia</p>
                                 <p className="text-white">{selectedGuide.experience_years || 0} años</p>
+                            </div>
+
+                            {/* Ghoscloud Verification Panel */}
+                            <div className="mt-6 border-t border-white/10 pt-6">
+                                <h3 className="text-cyan-400 font-semibold mb-3 flex items-center gap-2">
+                                    <span>🔍</span> Consulta Avanzada Ghoscloud
+                                </h3>
+                                <p className="text-xs text-gray-400 mb-3">
+                                    Verifica antecedentes penales, judiciales y policiales oficiales desde las bases de datos del estado.
+                                </p>
+                                <div className="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        placeholder={`DNI: ${selectedGuide.dircetur_id || 'Autocompletar'}`}
+                                        value={docNumberOverride}
+                                        onChange={(e) => setDocNumberOverride(e.target.value)}
+                                        className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50"
+                                    />
+                                    <button
+                                        onClick={() => handleGhoscloudVerification(selectedGuide.dircetur_id || '')}
+                                        disabled={verifyingBackground}
+                                        className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    >
+                                        {verifyingBackground ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                                Consultando...
+                                            </>
+                                        ) : 'Ejecutar Consulta'}
+                                    </button>
+                                </div>
+
+                                {ghoscloudData && (
+                                    <div className="mt-3 p-4 bg-black/40 rounded-lg border border-slate-700/50 max-h-60 overflow-auto">
+                                        {ghoscloudData.error ? (
+                                            <p className="text-red-400 text-sm whitespace-pre-wrap">{ghoscloudData.error}</p>
+                                        ) : (
+                                            <pre className="text-xs text-emerald-400 font-mono whitespace-pre-wrap break-all">
+                                                {JSON.stringify(ghoscloudData, null, 2)}
+                                            </pre>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             <div>

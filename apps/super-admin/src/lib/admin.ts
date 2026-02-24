@@ -200,6 +200,22 @@ export const adminService = {
         }
     },
 
+    // Ghoscloud Verification
+    async verifyDNI(dni: string): Promise<any> {
+        try {
+            return await apiRequest(ENDPOINTS.GHOSCLOUD_DNI(dni));
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    },
+    async verifyBackground(documentId: string, documentType: string = 'DNI'): Promise<any> {
+        try {
+            return await apiRequest(ENDPOINTS.GHOSCLOUD_BACKGROUND(documentId, documentType));
+        } catch (error: any) {
+            return { error: error.message };
+        }
+    },
+
     // Payments
     async getPayments(): Promise<Payment[]> {
         try {
