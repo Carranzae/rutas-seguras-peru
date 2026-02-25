@@ -207,11 +207,12 @@ class IdentityVerificationService:
                 "user_id": str(verification.user_id),
                 "user_name": user.full_name,
                 "user_email": user.email,
+                "user_phone": user.phone,
                 "user_avatar": user.avatar_url,
                 "verification_type": verification.verification_type.value,
                 "status": verification.status.value,
                 "selfie_url": verification.selfie_url,
-                "document_url": verification.document_url,
+                "document_url": verification.document_url,  # Usually front/cert
                 "license_number": verification.license_number,
                 "liveness_score": verification.liveness_score,
                 "document_score": verification.document_score,
@@ -222,6 +223,10 @@ class IdentityVerificationService:
                 item["nationality"] = guide.nationality
                 item["residence_city"] = guide.residence_city
                 item["department"] = guide.department
+                # In public registration, we stored DNI photo as 'dircetur_back_image_url' on guide
+                # and Certificate photo as 'dircetur_front_image_url' (or document_url on Verification)
+                if guide.dircetur_back_image_url:
+                    item["dni_url"] = guide.dircetur_back_image_url
                 
             verifications.append(item)
         

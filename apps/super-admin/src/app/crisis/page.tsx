@@ -1,5 +1,6 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { adminService, Emergency } from '@/lib/admin';
 import { getAuthToken } from '@/lib/api';
 import Link from 'next/link';
@@ -101,29 +102,18 @@ export default function CrisisPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0f1c]">
-            <header className="bg-[#101622] border-b border-white/10 px-8 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-gray-400 hover:text-white">← Volver</Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-white">🆘 Centro de Crisis</h1>
-                            <p className="text-gray-400 text-sm">Gestión de emergencias en tiempo real</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={loadEmergencies}
-                            className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30"
-                        >
-                            🔄 Actualizar
-                        </button>
-                        <span className={`px-4 py-2 rounded-full ${activeCount > 0 ? 'bg-red-500 animate-pulse' : 'bg-green-500'} text-white font-bold`}>
-                            {activeCount} Activas
-                        </span>
-                    </div>
-                </div>
-            </header>
+        <DashboardLayout title="Centro de Crisis" subtitle="Gestión de emergencias en tiempo real">
+            <div className="flex justify-end gap-4 items-center px-8 pt-6">
+                <button
+                    onClick={loadEmergencies}
+                    className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 font-medium"
+                >
+                    🔄 Actualizar Datos
+                </button>
+                <span className={`px-4 py-2 rounded-full ${activeCount > 0 ? 'bg-red-500 animate-pulse' : 'bg-green-500'} text-white font-bold`}>
+                    {activeCount} Activas
+                </span>
+            </div>
 
             <div className="p-8">
                 {/* Stats */}
@@ -340,6 +330,6 @@ export default function CrisisPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </DashboardLayout>
     );
 }

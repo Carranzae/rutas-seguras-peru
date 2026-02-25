@@ -1,5 +1,6 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useState } from 'react';
 
 interface Booking {
@@ -60,75 +61,75 @@ export default function ReservationsPage() {
     };
 
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold text-white mb-6">Reservas y Asignaciones</h1>
-
-            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-slate-900 text-gray-400 text-sm">
-                        <tr>
-                            <th className="p-4">ID Reserva</th>
-                            <th className="p-4">Tour</th>
-                            <th className="p-4">Turista</th>
-                            <th className="p-4">Fecha</th>
-                            <th className="p-4">Estado</th>
-                            <th className="p-4">Guía Asignado</th>
-                            <th className="p-4">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-700 text-white">
-                        {bookings.map((booking) => (
-                            <tr key={booking.id} className="hover:bg-slate-700/50 transition-colors">
-                                <td className="p-4 font-mono text-cyan-400">{booking.id}</td>
-                                <td className="p-4">{booking.tour_name}</td>
-                                <td className="p-4">{booking.tourist_name}</td>
-                                <td className="p-4">{booking.date}</td>
-                                <td className="p-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-bold ${booking.status === 'confirmed' ? 'bg-green-900 text-green-400 border border-green-800' :
+        <DashboardLayout title="Reservas y Asignaciones" subtitle="Gestiona las reservas y designa guías turísticos">
+            <div className="p-8">
+                <div className="bg-[#1a2235] rounded-xl border border-white/10 overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-[#101622] text-gray-400 text-sm border-b border-white/10">
+                            <tr>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">ID Reserva</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Tour</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Turista</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Fecha</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Estado</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Guía Asignado</th>
+                                <th className="p-4 font-medium uppercase tracking-wider text-xs">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5 text-white">
+                            {bookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-white/5 transition-colors">
+                                    <td className="p-4 font-mono text-cyan-400">{booking.id}</td>
+                                    <td className="p-4">{booking.tour_name}</td>
+                                    <td className="p-4">{booking.tourist_name}</td>
+                                    <td className="p-4">{booking.date}</td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded text-xs font-bold ${booking.status === 'confirmed' ? 'bg-green-900 text-green-400 border border-green-800' :
                                             booking.status === 'pending' ? 'bg-yellow-900 text-yellow-400 border border-yellow-800' :
                                                 'bg-gray-800 text-gray-400'
-                                        }`}>
-                                        {booking.status.toUpperCase()}
-                                    </span>
-                                </td>
-                                <td className="p-4">
-                                    {selectedBooking === booking.id ? (
-                                        <select
-                                            className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-cyan-500"
-                                            onChange={(e) => handleAssignGuide(booking.id, e.target.value)}
-                                            defaultValue=""
-                                        >
-                                            <option value="" disabled>Seleccionar...</option>
-                                            {guides.map(g => (
-                                                <option key={g.id} value={g.id} disabled={g.status === 'busy'}>
-                                                    {g.name} ({g.status === 'busy' ? 'Ocupado' : 'Disp.'})
-                                                </option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        booking.guide_name ? (
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm">🎒 {booking.guide_name}</span>
-                                                <button onClick={() => setSelectedBooking(booking.id)} className="text-xs text-cyan-400 hover:underline">Cambiar</button>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={() => setSelectedBooking(booking.id)}
-                                                className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1"
+                                            }`}>
+                                            {booking.status.toUpperCase()}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        {selectedBooking === booking.id ? (
+                                            <select
+                                                className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm focus:outline-none focus:border-cyan-500"
+                                                onChange={(e) => handleAssignGuide(booking.id, e.target.value)}
+                                                defaultValue=""
                                             >
-                                                ⚠️ Sin asignar
-                                            </button>
-                                        )
-                                    )}
-                                </td>
-                                <td className="p-4">
-                                    <button className="text-gray-400 hover:text-white px-2">Ver</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                                <option value="" disabled>Seleccionar...</option>
+                                                {guides.map(g => (
+                                                    <option key={g.id} value={g.id} disabled={g.status === 'busy'}>
+                                                        {g.name} ({g.status === 'busy' ? 'Ocupado' : 'Disp.'})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            booking.guide_name ? (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm">🎒 {booking.guide_name}</span>
+                                                    <button onClick={() => setSelectedBooking(booking.id)} className="text-xs text-cyan-400 hover:underline">Cambiar</button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setSelectedBooking(booking.id)}
+                                                    className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1"
+                                                >
+                                                    ⚠️ Sin asignar
+                                                </button>
+                                            )
+                                        )}
+                                    </td>
+                                    <td className="p-4">
+                                        <button className="text-gray-400 hover:text-white px-2">Ver</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </DashboardLayout>
     );
 }

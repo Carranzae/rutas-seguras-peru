@@ -1,8 +1,8 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { adminService, Payment } from '@/lib/admin';
 import { getAuthToken } from '@/lib/api';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -185,14 +185,9 @@ export default function PaymentsPage() {
 
 
     return (
-        <div className="min-h-screen bg-[#101622] p-8">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">💰 Pagos y Transacciones</h1>
-                    <p className="text-gray-400">Control de pagos completados y distribución de comisiones</p>
-                </div>
-                <div className="flex gap-4 items-center">
+        <DashboardLayout title="Pagos y Transacciones" subtitle="Control de pagos completados y distribución de comisiones">
+            <div className="p-8">
+                <div className="flex justify-end gap-4 items-center mb-8">
                     {/* Izipay Status Badge */}
                     {izipayStatus && (
                         <div className={`px-3 py-2 rounded-lg flex items-center gap-2 ${izipayStatus.mock_mode
@@ -210,230 +205,227 @@ export default function PaymentsPage() {
                     )}
                     <button
                         onClick={exportToCSV}
-                        className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 flex items-center gap-2"
+                        className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 flex items-center gap-2 font-medium"
                     >
                         📥 Exportar Excel
                     </button>
                     <button
                         onClick={loadPayments}
-                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30"
+                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 font-medium"
                     >
                         🔄 Actualizar
                     </button>
-                    <Link href="/dashboard" className="px-4 py-2 bg-[#232f48] text-gray-300 rounded-lg hover:bg-[#2a3750] transition">
-                        ← Volver al Dashboard
-                    </Link>
                 </div>
-            </div>
 
-            {/* Error */}
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 text-red-400">
-                    ⚠️ {error}
-                </div>
-            )}
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-white/10">
-                    <p className="text-gray-400 text-xs uppercase tracking-wide">Total Pagos</p>
-                    <p className="text-2xl font-bold text-white">{stats.totalPayments}</p>
-                </div>
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-green-500/20">
-                    <p className="text-green-400 text-xs uppercase tracking-wide">Completados</p>
-                    <p className="text-2xl font-bold text-green-400">{stats.completedPayments}</p>
-                </div>
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-blue-500/20">
-                    <p className="text-blue-400 text-xs uppercase tracking-wide">Ingresos Totales</p>
-                    <p className="text-2xl font-bold text-blue-400">S/.{stats.totalRevenue.toFixed(2)}</p>
-                </div>
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-purple-500/20">
-                    <p className="text-purple-400 text-xs uppercase tracking-wide">Comisión Plataforma (15%)</p>
-                    <p className="text-2xl font-bold text-purple-400">S/.{stats.platformEarnings.toFixed(2)}</p>
-                </div>
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-cyan-500/20">
-                    <p className="text-cyan-400 text-xs uppercase tracking-wide">Pago Agencias (70%)</p>
-                    <p className="text-2xl font-bold text-cyan-400">S/.{stats.agencyPayouts.toFixed(2)}</p>
-                </div>
-                <div className="bg-[#1a2235] p-4 rounded-xl border border-orange-500/20">
-                    <p className="text-orange-400 text-xs uppercase tracking-wide">Pago Guías (15%)</p>
-                    <p className="text-2xl font-bold text-orange-400">S/.{stats.guidePayouts.toFixed(2)}</p>
-                </div>
-            </div>
-
-            {/* Commission Distribution Chart */}
-            <div className="bg-[#1a2235] p-6 rounded-xl border border-white/10 mb-8">
-                <h3 className="text-white font-semibold mb-4">📊 Distribución de Comisiones</h3>
-                <div className="flex items-center gap-4">
-                    <div className="flex-1 h-8 bg-[#232f48] rounded-full overflow-hidden flex">
-                        <div className="h-full bg-purple-500 transition-all" style={{ width: '15%' }} title="Plataforma 15%"></div>
-                        <div className="h-full bg-cyan-500 transition-all" style={{ width: '70%' }} title="Agencia 70%"></div>
-                        <div className="h-full bg-orange-500 transition-all" style={{ width: '15%' }} title="Guía 15%"></div>
+                {/* Error */}
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 text-red-400">
+                        ⚠️ {error}
                     </div>
-                    <div className="flex gap-4 text-sm">
-                        <span className="flex items-center gap-2">
-                            <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
-                            <span className="text-gray-400">Plataforma 15%</span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                            <span className="w-3 h-3 bg-cyan-500 rounded-full"></span>
-                            <span className="text-gray-400">Agencia 70%</span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                            <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
-                            <span className="text-gray-400">Guía 15%</span>
-                        </span>
+                )}
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-white/10">
+                        <p className="text-gray-400 text-xs uppercase tracking-wide">Total Pagos</p>
+                        <p className="text-2xl font-bold text-white">{stats.totalPayments}</p>
+                    </div>
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-green-500/20">
+                        <p className="text-green-400 text-xs uppercase tracking-wide">Completados</p>
+                        <p className="text-2xl font-bold text-green-400">{stats.completedPayments}</p>
+                    </div>
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-blue-500/20">
+                        <p className="text-blue-400 text-xs uppercase tracking-wide">Ingresos Totales</p>
+                        <p className="text-2xl font-bold text-blue-400">S/.{stats.totalRevenue.toFixed(2)}</p>
+                    </div>
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-purple-500/20">
+                        <p className="text-purple-400 text-xs uppercase tracking-wide">Comisión Plataforma (15%)</p>
+                        <p className="text-2xl font-bold text-purple-400">S/.{stats.platformEarnings.toFixed(2)}</p>
+                    </div>
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-cyan-500/20">
+                        <p className="text-cyan-400 text-xs uppercase tracking-wide">Pago Agencias (70%)</p>
+                        <p className="text-2xl font-bold text-cyan-400">S/.{stats.agencyPayouts.toFixed(2)}</p>
+                    </div>
+                    <div className="bg-[#1a2235] p-4 rounded-xl border border-orange-500/20">
+                        <p className="text-orange-400 text-xs uppercase tracking-wide">Pago Guías (15%)</p>
+                        <p className="text-2xl font-bold text-orange-400">S/.{stats.guidePayouts.toFixed(2)}</p>
                     </div>
                 </div>
-            </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-4 mb-6">
-                <div className="flex-1 min-w-[200px]">
-                    <input
-                        type="text"
-                        placeholder="Buscar por ID o método de pago..."
-                        className="w-full px-4 py-3 bg-[#1a2235] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#1152d4]"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-                <div className="flex gap-2">
-                    {['all', 'pending', 'completed', 'failed'].map((status) => (
-                        <button
-                            key={status}
-                            onClick={() => setFilter(status)}
-                            className={`px-4 py-2 rounded-lg border transition ${filter === status
-                                ? 'bg-[#1152d4] border-[#1152d4] text-white'
-                                : 'bg-[#1a2235] border-white/10 text-gray-400 hover:border-[#1152d4]/50'
-                                }`}
-                        >
-                            {status === 'all' ? 'Todos' : status.charAt(0).toUpperCase() + status.slice(1)}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Loading */}
-            {loading ? (
-                <div className="text-center py-12">
-                    <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-400">Cargando pagos...</p>
-                </div>
-            ) : (
-                /* Payments Table */
-                <div className="bg-[#1a2235] rounded-xl border border-white/10 overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/10">
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">ID</th>
-                                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Método</th>
-                                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Monto Total</th>
-                                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Plataforma</th>
-                                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Agencia</th>
-                                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Guía</th>
-                                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Estado</th>
-                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Fecha</th>
-                                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                                {filteredPayments.map((payment) => (
-                                    <tr key={payment.id} className="hover:bg-white/5 transition">
-                                        <td className="px-6 py-4">
-                                            <p className="text-white font-mono text-sm">{payment.id.slice(0, 12)}...</p>
-                                            <p className="text-gray-500 text-xs">Reserva: {payment.booking_id?.slice(0, 8) || 'N/A'}</p>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className="text-2xl" title={payment.payment_method}>
-                                                {methodIcons[payment.payment_method] || '💳'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="text-white font-semibold">S/.{payment.amount.toFixed(2)}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="text-purple-400">S/.{(payment.platform_fee || 0).toFixed(2)}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="text-cyan-400">S/.{(payment.agency_amount || 0).toFixed(2)}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="text-orange-400">S/.{(payment.guide_amount || 0).toFixed(2)}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${statusColors[payment.status] || statusColors.pending}`}>
-                                                {payment.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-gray-300">{new Date(payment.created_at).toLocaleDateString('es-PE')}</p>
-                                            <p className="text-gray-500 text-xs">{new Date(payment.created_at).toLocaleTimeString('es-PE')}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex gap-1 justify-center">
-                                                {payment.status === 'pending' && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleConfirmPayment(payment.id)}
-                                                            disabled={actionLoading === payment.id}
-                                                            className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs hover:bg-green-500/30 disabled:opacity-50"
-                                                            title="Confirmar pago"
-                                                        >
-                                                            ✓
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleRejectPayment(payment.id)}
-                                                            disabled={actionLoading === payment.id}
-                                                            className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30 disabled:opacity-50"
-                                                            title="Rechazar pago"
-                                                        >
-                                                            ✗
-                                                        </button>
-                                                    </>
-                                                )}
-                                                {payment.status === 'completed' && (
-                                                    <button
-                                                        onClick={() => handleRefund(payment.id)}
-                                                        disabled={actionLoading === payment.id}
-                                                        className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs hover:bg-purple-500/30 disabled:opacity-50"
-                                                        title="Reembolsar"
-                                                    >
-                                                        ↺
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleVerifyPayment(payment.id)}
-                                                    disabled={actionLoading === payment.id}
-                                                    className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs hover:bg-blue-500/30 disabled:opacity-50"
-                                                    title="Verificar con Izipay"
-                                                >
-                                                    🔍
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {filteredPayments.length === 0 && (
-                        <div className="p-12 text-center">
-                            <p className="text-gray-400 text-lg">No se encontraron pagos</p>
-                            <p className="text-gray-500 text-sm mt-2">Los pagos aparecerán cuando se procesen reservas</p>
+                {/* Commission Distribution Chart */}
+                <div className="bg-[#1a2235] p-6 rounded-xl border border-white/10 mb-8">
+                    <h3 className="text-white font-semibold mb-4">📊 Distribución de Comisiones</h3>
+                    <div className="flex items-center gap-4">
+                        <div className="flex-1 h-8 bg-[#232f48] rounded-full overflow-hidden flex">
+                            <div className="h-full bg-purple-500 transition-all" style={{ width: '15%' }} title="Plataforma 15%"></div>
+                            <div className="h-full bg-cyan-500 transition-all" style={{ width: '70%' }} title="Agencia 70%"></div>
+                            <div className="h-full bg-orange-500 transition-all" style={{ width: '15%' }} title="Guía 15%"></div>
                         </div>
-                    )}
+                        <div className="flex gap-4 text-sm">
+                            <span className="flex items-center gap-2">
+                                <span className="w-3 h-3 bg-purple-500 rounded-full"></span>
+                                <span className="text-gray-400">Plataforma 15%</span>
+                            </span>
+                            <span className="flex items-center gap-2">
+                                <span className="w-3 h-3 bg-cyan-500 rounded-full"></span>
+                                <span className="text-gray-400">Agencia 70%</span>
+                            </span>
+                            <span className="flex items-center gap-2">
+                                <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
+                                <span className="text-gray-400">Guía 15%</span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            )}
 
-            {/* Pagination */}
-            <div className="flex items-center justify-between mt-6">
-                <p className="text-gray-400 text-sm">
-                    Mostrando {filteredPayments.length} de {payments.length} pagos
-                </p>
+                {/* Filters */}
+                <div className="flex flex-wrap gap-4 mb-6">
+                    <div className="flex-1 min-w-[200px]">
+                        <input
+                            type="text"
+                            placeholder="Buscar por ID o método de pago..."
+                            className="w-full px-4 py-3 bg-[#1a2235] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#1152d4]"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        {['all', 'pending', 'completed', 'failed'].map((status) => (
+                            <button
+                                key={status}
+                                onClick={() => setFilter(status)}
+                                className={`px-4 py-2 rounded-lg border transition ${filter === status
+                                    ? 'bg-[#1152d4] border-[#1152d4] text-white'
+                                    : 'bg-[#1a2235] border-white/10 text-gray-400 hover:border-[#1152d4]/50'
+                                    }`}
+                            >
+                                {status === 'all' ? 'Todos' : status.charAt(0).toUpperCase() + status.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Loading */}
+                {loading ? (
+                    <div className="text-center py-12">
+                        <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+                        <p className="text-gray-400">Cargando pagos...</p>
+                    </div>
+                ) : (
+                    /* Payments Table */
+                    <div className="bg-[#1a2235] rounded-xl border border-white/10 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-white/10">
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">ID</th>
+                                        <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Método</th>
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Monto Total</th>
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Plataforma</th>
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Agencia</th>
+                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wide">Guía</th>
+                                        <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Estado</th>
+                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wide">Fecha</th>
+                                        <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wide">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {filteredPayments.map((payment) => (
+                                        <tr key={payment.id} className="hover:bg-white/5 transition">
+                                            <td className="px-6 py-4">
+                                                <p className="text-white font-mono text-sm">{payment.id.slice(0, 12)}...</p>
+                                                <p className="text-gray-500 text-xs">Reserva: {payment.booking_id?.slice(0, 8) || 'N/A'}</p>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className="text-2xl" title={payment.payment_method}>
+                                                    {methodIcons[payment.payment_method] || '💳'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-white font-semibold">S/.{payment.amount.toFixed(2)}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-purple-400">S/.{(payment.platform_fee || 0).toFixed(2)}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-cyan-400">S/.{(payment.agency_amount || 0).toFixed(2)}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-orange-400">S/.{(payment.guide_amount || 0).toFixed(2)}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${statusColors[payment.status] || statusColors.pending}`}>
+                                                    {payment.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <p className="text-gray-300">{new Date(payment.created_at).toLocaleDateString('es-PE')}</p>
+                                                <p className="text-gray-500 text-xs">{new Date(payment.created_at).toLocaleTimeString('es-PE')}</p>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex gap-1 justify-center">
+                                                    {payment.status === 'pending' && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleConfirmPayment(payment.id)}
+                                                                disabled={actionLoading === payment.id}
+                                                                className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs hover:bg-green-500/30 disabled:opacity-50"
+                                                                title="Confirmar pago"
+                                                            >
+                                                                ✓
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleRejectPayment(payment.id)}
+                                                                disabled={actionLoading === payment.id}
+                                                                className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-xs hover:bg-red-500/30 disabled:opacity-50"
+                                                                title="Rechazar pago"
+                                                            >
+                                                                ✗
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {payment.status === 'completed' && (
+                                                        <button
+                                                            onClick={() => handleRefund(payment.id)}
+                                                            disabled={actionLoading === payment.id}
+                                                            className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs hover:bg-purple-500/30 disabled:opacity-50"
+                                                            title="Reembolsar"
+                                                        >
+                                                            ↺
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => handleVerifyPayment(payment.id)}
+                                                        disabled={actionLoading === payment.id}
+                                                        className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs hover:bg-blue-500/30 disabled:opacity-50"
+                                                        title="Verificar con Izipay"
+                                                    >
+                                                        🔍
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {filteredPayments.length === 0 && (
+                            <div className="p-12 text-center">
+                                <p className="text-gray-400 text-lg">No se encontraron pagos</p>
+                                <p className="text-gray-500 text-sm mt-2">Los pagos aparecerán cuando se procesen reservas</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-6">
+                    <p className="text-gray-400 text-sm">
+                        Mostrando {filteredPayments.length} de {payments.length} pagos
+                    </p>
+                </div>
             </div>
-        </div>
+        </DashboardLayout>
     );
 }

@@ -1,8 +1,8 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { adminService, Guide } from '@/lib/admin';
 import { getAuthToken } from '@/lib/api';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -99,21 +99,12 @@ export default function GuidesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0f1c]">
-            <header className="bg-[#101622] border-b border-white/10 px-8 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-gray-400 hover:text-white">← Volver</Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-white">🪪 Gestión de Guías</h1>
-                            <p className="text-gray-400 text-sm">Verificación DIRCETUR y biométrica</p>
-                        </div>
-                    </div>
-                    <button onClick={loadGuides} className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30">
-                        🔄 Actualizar
-                    </button>
-                </div>
-            </header>
+        <DashboardLayout title="Gestión de Guías" subtitle="Verificación DIRCETUR y biométrica">
+            <div className="flex justify-end px-8 pt-6">
+                <button onClick={loadGuides} className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 font-medium">
+                    🔄 Actualizar Datos
+                </button>
+            </div>
 
             <div className="p-8">
                 {/* Stats */}
@@ -358,6 +349,6 @@ export default function GuidesPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </DashboardLayout>
     );
 }

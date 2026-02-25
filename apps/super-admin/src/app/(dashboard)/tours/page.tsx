@@ -1,5 +1,6 @@
 "use client";
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { api } from "@/services/api";
 import { CreateTourData, Tour, toursService } from "@/services/tours.service";
 import { useRouter } from "next/navigation";
@@ -196,394 +197,391 @@ export default function ToursPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white">Marketplace CMS</h1>
-                    <p className="text-slate-400 mt-1">Gestiona los tours y experiencias</p>
+        <DashboardLayout title="Marketplace CMS" subtitle="Gestiona los tours y experiencias">
+            <div className="p-8">
+                <div className="flex justify-end mb-8">
+                    <button
+                        onClick={openCreateModal}
+                        className="flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20"
+                    >
+                        <PlusIcon />
+                        Nuevo Tour
+                    </button>
                 </div>
-                <button
-                    onClick={openCreateModal}
-                    className="flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20"
-                >
-                    <PlusIcon />
-                    Nuevo Tour
-                </button>
-            </div>
 
-            {/* Tours Grid */}
-            {loading ? (
-                <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {tours.map((tour) => (
-                        <div
-                            key={tour.id}
-                            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl overflow-hidden hover:border-cyan-500/30 transition-all group"
-                        >
-                            {/* Tour Image */}
-                            <div className="h-48 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center relative overflow-hidden">
-                                {(tour.cover_image_url || tour.image_url) ? (
-                                    <img
-                                        src={tour.cover_image_url || tour.image_url}
-                                        alt={tour.name}
-                                        className="w-full h-full object-cover"
-                                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                            (e.currentTarget.nextElementSibling as HTMLElement)?.classList.remove('hidden');
-                                        }}
-                                    />
-                                ) : null}
-                                <span className={`text-4xl ${(tour.cover_image_url || tour.image_url) ? 'hidden' : ''}`}>🏔️</span>
-                                {tour.is_featured && (
-                                    <span className="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full">⭐ DESTACADO</span>
-                                )}
-                            </div>
-
-                            <div className="p-5">
-                                <div className="flex items-start justify-between mb-3">
-                                    <h3 className="text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors">
-                                        {tour.name}
-                                    </h3>
-                                    <span
-                                        className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(tour.status)}`}
-                                    >
-                                        {tour.status}
-                                    </span>
+                {/* Tours Grid */}
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {tours.map((tour) => (
+                            <div
+                                key={tour.id}
+                                className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl overflow-hidden hover:border-cyan-500/30 transition-all group"
+                            >
+                                {/* Tour Image */}
+                                <div className="h-48 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center relative overflow-hidden">
+                                    {(tour.cover_image_url || tour.image_url) ? (
+                                        <img
+                                            src={tour.cover_image_url || tour.image_url}
+                                            alt={tour.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.currentTarget.nextElementSibling as HTMLElement)?.classList.remove('hidden');
+                                            }}
+                                        />
+                                    ) : null}
+                                    <span className={`text-4xl ${(tour.cover_image_url || tour.image_url) ? 'hidden' : ''}`}>🏔️</span>
+                                    {tour.is_featured && (
+                                        <span className="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full">⭐ DESTACADO</span>
+                                    )}
                                 </div>
 
-                                <p className="text-slate-400 text-sm mb-4 line-clamp-2">
-                                    {tour.description}
-                                </p>
+                                <div className="p-5">
+                                    <div className="flex items-start justify-between mb-3">
+                                        <h3 className="text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors">
+                                            {tour.name}
+                                        </h3>
+                                        <span
+                                            className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(tour.status)}`}
+                                        >
+                                            {tour.status}
+                                        </span>
+                                    </div>
 
-                                <div className="flex items-center gap-4 text-sm text-slate-300 mb-4">
-                                    <span className="flex items-center gap-1">
-                                        💰 S/. {tour.price}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        ⏱️ {tour.duration_hours}h
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        👥 {tour.current_bookings}/{tour.max_capacity}
-                                    </span>
-                                </div>
+                                    <p className="text-slate-400 text-sm mb-4 line-clamp-2">
+                                        {tour.description}
+                                    </p>
 
-                                <div className="flex items-center gap-2">
-                                    <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
-                                        {tour.category}
-                                    </span>
-                                    <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
-                                        {tour.difficulty}
-                                    </span>
-                                    <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
-                                        📍 {tour.location}
-                                    </span>
-                                </div>
+                                    <div className="flex items-center gap-4 text-sm text-slate-300 mb-4">
+                                        <span className="flex items-center gap-1">
+                                            💰 S/. {tour.price}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            ⏱️ {tour.duration_hours}h
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            👥 {tour.current_bookings}/{tour.max_capacity}
+                                        </span>
+                                    </div>
 
-                                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-800">
-                                    <button
-                                        onClick={() => openEditModal(tour)}
-                                        className="flex-1 flex items-center justify-center gap-2 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                                    >
-                                        <EditIcon /> Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(tour.id)}
-                                        className="flex items-center justify-center gap-2 py-2 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
-                                    >
-                                        <TrashIcon />
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
+                                            {tour.category}
+                                        </span>
+                                        <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
+                                            {tour.difficulty}
+                                        </span>
+                                        <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded-lg">
+                                            📍 {tour.location}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-800">
+                                        <button
+                                            onClick={() => openEditModal(tour)}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                                        >
+                                            <EditIcon /> Editar
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(tour.id)}
+                                            className="flex items-center justify-center gap-2 py-2 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                                        >
+                                            <TrashIcon />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
 
-                    {tours.length === 0 && (
-                        <div className="col-span-full flex flex-col items-center justify-center py-16 text-slate-400">
-                            <span className="text-6xl mb-4">🏜️</span>
-                            <p className="text-lg">No hay tours creados</p>
-                            <p className="text-sm">Crea tu primer tour para comenzar</p>
-                        </div>
-                    )}
-                </div>
-            )}
+                        {tours.length === 0 && (
+                            <div className="col-span-full flex flex-col items-center justify-center py-16 text-slate-400">
+                                <span className="text-6xl mb-4">🏜️</span>
+                                <p className="text-lg">No hay tours creados</p>
+                                <p className="text-sm">Crea tu primer tour para comenzar</p>
+                            </div>
+                        )}
+                    </div>
+                )}
 
-            {/* Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-slate-800">
-                            <h2 className="text-2xl font-bold text-white">
-                                {editingTour ? "Editar Tour" : "Nuevo Tour"}
-                            </h2>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Nombre del Tour *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
-                                    placeholder="Ej: Machu Picchu Sunrise"
-                                />
+                {/* Modal */}
+                {showModal && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <div className="p-6 border-b border-slate-800">
+                                <h2 className="text-2xl font-bold text-white">
+                                    {editingTour ? "Editar Tour" : "Nuevo Tour"}
+                                </h2>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Descripción *
-                                </label>
-                                <textarea
-                                    required
-                                    rows={3}
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all resize-none"
-                                    placeholder="Describe la experiencia..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
+                            <form onSubmit={handleSubmit} className="p-6 space-y-5">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Precio (S/.)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Duración (horas)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={formData.duration_hours}
-                                        onChange={(e) => setFormData({ ...formData, duration_hours: Number(e.target.value) })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Categoría
-                                    </label>
-                                    <select
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                    >
-                                        {CATEGORIES.map((cat) => (
-                                            <option key={cat} value={cat}>
-                                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Dificultad
-                                    </label>
-                                    <select
-                                        value={formData.difficulty}
-                                        onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                    >
-                                        {DIFFICULTIES.map((diff) => (
-                                            <option key={diff} value={diff}>
-                                                {diff.charAt(0).toUpperCase() + diff.slice(1)}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Capacidad Máxima
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={formData.max_capacity}
-                                        onChange={(e) => setFormData({ ...formData, max_capacity: Number(e.target.value) })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Ubicación
+                                        Nombre del Tour *
                                     </label>
                                     <input
                                         type="text"
-                                        value={formData.start_location}
-                                        onChange={(e) => setFormData({ ...formData, start_location: e.target.value })}
-                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                        placeholder="Ej: Cusco"
+                                        required
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all"
+                                        placeholder="Ej: Machu Picchu Sunrise"
                                     />
                                 </div>
-                            </div>
 
-                            {/* MEDIA SECTION */}
-                            <div className="border-t border-slate-700 pt-5 mt-5">
-                                <h3 className="text-lg font-semibold text-cyan-400 mb-4 flex items-center gap-2">
-                                    📸 Media del Tour
-                                </h3>
-                                <p className="text-xs text-slate-400 mb-4">
-                                    Sube archivos desde tu dispositivo o usa enlaces directos
-                                </p>
-
-                                {/* Cover Image */}
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Imagen de Portada
+                                        Descripción *
                                     </label>
-                                    <div className="flex gap-2 mb-2">
-                                        <input
-                                            type="url"
-                                            value={formData.cover_image_url || ""}
-                                            onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-                                            className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                            placeholder="https://..."
-                                        />
-                                        <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'cover')} disabled={uploading} />
-                                            <UploadIcon />
-                                        </label>
-                                    </div>
-                                    {formData.cover_image_url && (
-                                        <div className="mt-2 h-24 w-24 rounded-lg overflow-hidden border border-slate-700">
-                                            <img src={formData.cover_image_url} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
-                                    )}
+                                    <textarea
+                                        required
+                                        rows={3}
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all resize-none"
+                                        placeholder="Describe la experiencia..."
+                                    />
                                 </div>
 
-                                {/* Video URL */}
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Video Promocional
-                                    </label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="url"
-                                            value={formData.video_url || ""}
-                                            onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                                            className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                            placeholder="https://..."
-                                        />
-                                        <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                                            <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileUpload(e, 'video')} disabled={uploading} />
-                                            <UploadIcon />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Precio (S/.)
                                         </label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={formData.price}
+                                            onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Duración (horas)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={formData.duration_hours}
+                                            onChange={(e) => setFormData({ ...formData, duration_hours: Number(e.target.value) })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                        />
                                     </div>
                                 </div>
 
-                                {/* Gallery URLs */}
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                                        Galería de Imágenes
-                                    </label>
-                                    <div className="flex gap-2 mb-2">
-                                        <input
-                                            type="url"
-                                            value={galleryInput}
-                                            onChange={(e) => setGalleryInput(e.target.value)}
-                                            className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
-                                            placeholder="https://..."
-                                        />
-                                        <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'gallery')} disabled={uploading} />
-                                            <UploadIcon />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Categoría
                                         </label>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                if (galleryInput.trim()) {
-                                                    setFormData({
-                                                        ...formData,
-                                                        gallery_urls: [...(formData.gallery_urls || []), galleryInput.trim()]
-                                                    });
-                                                    setGalleryInput("");
-                                                }
-                                            }}
-                                            className="px-4 py-3 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-xl transition-colors"
+                                        <select
+                                            value={formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
                                         >
-                                            + URL
-                                        </button>
-                                    </div>
-                                    {/* Gallery preview */}
-                                    {(formData.gallery_urls?.length || 0) > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {formData.gallery_urls?.map((url: string, index: number) => (
-                                                <div key={index} className="relative group">
-                                                    <div className="h-16 w-16 rounded-lg overflow-hidden border border-slate-700">
-                                                        <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            const newGallery = formData.gallery_urls?.filter((_: string, i: number) => i !== index) || [];
-                                                            setFormData({ ...formData, gallery_urls: newGallery });
-                                                        }}
-                                                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
+                                            {CATEGORIES.map((cat) => (
+                                                <option key={cat} value={cat}>
+                                                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                                                </option>
                                             ))}
-                                        </div>
-                                    )}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Dificultad
+                                        </label>
+                                        <select
+                                            value={formData.difficulty}
+                                            onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                        >
+                                            {DIFFICULTIES.map((diff) => (
+                                                <option key={diff} value={diff}>
+                                                    {diff.charAt(0).toUpperCase() + diff.slice(1)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
 
-                                {/* Featured Toggle */}
-                                <div className="flex items-center gap-3 mt-4">
-                                    <label className="relative inline-flex items-center cursor-pointer">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Capacidad Máxima
+                                        </label>
                                         <input
-                                            type="checkbox"
-                                            checked={formData.is_featured || false}
-                                            onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
-                                            className="sr-only peer"
+                                            type="number"
+                                            min="1"
+                                            value={formData.max_capacity}
+                                            onChange={(e) => setFormData({ ...formData, max_capacity: Number(e.target.value) })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
                                         />
-                                        <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
-                                    </label>
-                                    <span className="text-sm font-medium text-slate-300">⭐ Tour Destacado (aparece primero)</span>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Ubicación
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.start_location}
+                                            onChange={(e) => setFormData({ ...formData, start_location: e.target.value })}
+                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                            placeholder="Ej: Cusco"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20"
-                                >
-                                    {editingTour ? "Guardar Cambios" : "Crear Tour"}
-                                </button>
-                            </div>
-                        </form>
+                                {/* MEDIA SECTION */}
+                                <div className="border-t border-slate-700 pt-5 mt-5">
+                                    <h3 className="text-lg font-semibold text-cyan-400 mb-4 flex items-center gap-2">
+                                        📸 Media del Tour
+                                    </h3>
+                                    <p className="text-xs text-slate-400 mb-4">
+                                        Sube archivos desde tu dispositivo o usa enlaces directos
+                                    </p>
+
+                                    {/* Cover Image */}
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Imagen de Portada
+                                        </label>
+                                        <div className="flex gap-2 mb-2">
+                                            <input
+                                                type="url"
+                                                value={formData.cover_image_url || ""}
+                                                onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
+                                                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                                placeholder="https://..."
+                                            />
+                                            <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'cover')} disabled={uploading} />
+                                                <UploadIcon />
+                                            </label>
+                                        </div>
+                                        {formData.cover_image_url && (
+                                            <div className="mt-2 h-24 w-24 rounded-lg overflow-hidden border border-slate-700">
+                                                <img src={formData.cover_image_url} alt="Preview" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Video URL */}
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Video Promocional
+                                        </label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="url"
+                                                value={formData.video_url || ""}
+                                                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                                                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                                placeholder="https://..."
+                                            />
+                                            <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                <input type="file" accept="video/*" className="hidden" onChange={(e) => handleFileUpload(e, 'video')} disabled={uploading} />
+                                                <UploadIcon />
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    {/* Gallery URLs */}
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                            Galería de Imágenes
+                                        </label>
+                                        <div className="flex gap-2 mb-2">
+                                            <input
+                                                type="url"
+                                                value={galleryInput}
+                                                onChange={(e) => setGalleryInput(e.target.value)}
+                                                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:border-cyan-500 outline-none transition-all"
+                                                placeholder="https://..."
+                                            />
+                                            <label className={`cursor-pointer px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                                                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'gallery')} disabled={uploading} />
+                                                <UploadIcon />
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (galleryInput.trim()) {
+                                                        setFormData({
+                                                            ...formData,
+                                                            gallery_urls: [...(formData.gallery_urls || []), galleryInput.trim()]
+                                                        });
+                                                        setGalleryInput("");
+                                                    }
+                                                }}
+                                                className="px-4 py-3 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-xl transition-colors"
+                                            >
+                                                + URL
+                                            </button>
+                                        </div>
+                                        {/* Gallery preview */}
+                                        {(formData.gallery_urls?.length || 0) > 0 && (
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {formData.gallery_urls?.map((url: string, index: number) => (
+                                                    <div key={index} className="relative group">
+                                                        <div className="h-16 w-16 rounded-lg overflow-hidden border border-slate-700">
+                                                            <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newGallery = formData.gallery_urls?.filter((_: string, i: number) => i !== index) || [];
+                                                                setFormData({ ...formData, gallery_urls: newGallery });
+                                                            }}
+                                                            className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Featured Toggle */}
+                                    <div className="flex items-center gap-3 mt-4">
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.is_featured || false}
+                                                onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                                                className="sr-only peer"
+                                            />
+                                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                                        </label>
+                                        <span className="text-sm font-medium text-slate-300">⭐ Tour Destacado (aparece primero)</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowModal(false)}
+                                        className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20"
+                                    >
+                                        {editingTour ? "Guardar Cambios" : "Crear Tour"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </DashboardLayout>
     );
 }

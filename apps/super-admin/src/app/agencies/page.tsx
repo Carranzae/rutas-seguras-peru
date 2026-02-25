@@ -1,8 +1,8 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { adminService, Agency } from '@/lib/admin';
 import { getAuthToken } from '@/lib/api';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -78,27 +78,15 @@ export default function AgenciesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0f1c]">
-            {/* Header */}
-            <header className="bg-[#101622] border-b border-white/10 px-8 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="text-gray-400 hover:text-white">
-                            ← Volver
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-white">🏢 Gestión de Agencias</h1>
-                            <p className="text-gray-400 text-sm">Verificar y administrar agencias de turismo</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={loadAgencies}
-                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30"
-                    >
-                        🔄 Actualizar
-                    </button>
-                </div>
-            </header>
+        <DashboardLayout title="Gestión de Agencias" subtitle="Verificar y administrar agencias de turismo al nivel nacional">
+            <div className="flex justify-end px-8 pt-6">
+                <button
+                    onClick={loadAgencies}
+                    className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 font-medium"
+                >
+                    🔄 Actualizar Datos
+                </button>
+            </div>
 
             <div className="p-8">
                 {/* Stats */}
@@ -226,7 +214,7 @@ export default function AgenciesPage() {
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setSelectedAgency(null)}>
                     <div className="bg-[#1a2235] rounded-2xl p-8 max-w-lg w-full mx-4 border border-white/10" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-start mb-6">
-                            <h2 className="text-2xl font-bold text-white">{selectedAgency.business_name}</h2>
+                            <h2 className="text-2xl font-bold text-white">{selectedAgency?.business_name}</h2>
                             <button onClick={() => setSelectedAgency(null)} className="text-gray-400 hover:text-white text-2xl">&times;</button>
                         </div>
 
@@ -234,47 +222,47 @@ export default function AgenciesPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-gray-400 text-sm">RUC</p>
-                                    <p className="text-white font-mono">{selectedAgency.ruc}</p>
+                                    <p className="text-white font-mono">{selectedAgency?.ruc}</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm">Estado</p>
-                                    <span className={`px-3 py-1 rounded-full text-sm border ${statusColors[selectedAgency.status.toLowerCase()]}`}>
-                                        {selectedAgency.status}
+                                    <span className={`px-3 py-1 rounded-full text-sm border ${statusColors[selectedAgency?.status?.toLowerCase() || 'pending']}`}>
+                                        {selectedAgency?.status}
                                     </span>
                                 </div>
                             </div>
 
                             <div>
                                 <p className="text-gray-400 text-sm">Email</p>
-                                <p className="text-white">{selectedAgency.email}</p>
+                                <p className="text-white">{selectedAgency?.email}</p>
                             </div>
 
                             <div>
                                 <p className="text-gray-400 text-sm">Teléfono</p>
-                                <p className="text-white">{selectedAgency.phone || 'No registrado'}</p>
+                                <p className="text-white">{selectedAgency?.phone || 'No registrado'}</p>
                             </div>
 
                             <div>
                                 <p className="text-gray-400 text-sm">Ubicación</p>
-                                <p className="text-white">{selectedAgency.city}, {selectedAgency.region}</p>
+                                <p className="text-white">{selectedAgency?.city}, {selectedAgency?.region}</p>
                             </div>
 
                             <div>
                                 <p className="text-gray-400 text-sm">Fecha de Registro</p>
-                                <p className="text-white">{new Date(selectedAgency.created_at).toLocaleDateString('es-PE')}</p>
+                                <p className="text-white">{selectedAgency?.created_at ? new Date(selectedAgency.created_at).toLocaleDateString('es-PE') : ''}</p>
                             </div>
                         </div>
 
-                        {selectedAgency.status.toLowerCase() === 'pending' && (
+                        {selectedAgency?.status?.toLowerCase() === 'pending' && (
                             <div className="flex gap-3 mt-6 pt-6 border-t border-white/10">
                                 <button
-                                    onClick={() => { handleVerify(selectedAgency.id, true); setSelectedAgency(null); }}
+                                    onClick={() => { if (selectedAgency?.id) handleVerify(selectedAgency.id, true); setSelectedAgency(null); }}
                                     className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium"
                                 >
                                     ✅ Aprobar Agencia
                                 </button>
                                 <button
-                                    onClick={() => { handleVerify(selectedAgency.id, false); setSelectedAgency(null); }}
+                                    onClick={() => { if (selectedAgency?.id) handleVerify(selectedAgency.id, false); setSelectedAgency(null); }}
                                     className="flex-1 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-xl font-medium"
                                 >
                                     ❌ Rechazar
@@ -284,6 +272,6 @@ export default function AgenciesPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </DashboardLayout>
     );
 }

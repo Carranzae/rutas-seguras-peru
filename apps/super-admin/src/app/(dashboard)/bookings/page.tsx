@@ -1,5 +1,6 @@
 'use client';
 
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useCallback, useEffect, useState } from 'react';
 
 interface Booking {
@@ -193,18 +194,9 @@ export default function BookingsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-white p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold text-cyan-400 font-mono">
-                        📋 GESTIÓN DE RESERVAS
-                    </h1>
-                    <p className="text-gray-400 text-sm mt-1">
-                        Reservas de turistas - Pagos a Super Admin
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
+        <DashboardLayout title="Gestión de Reservas" subtitle="Reservas de turistas - Pagos a Super Admin">
+            <div className="p-8">
+                <div className="flex justify-end items-center gap-4 mb-8">
                     <div className="flex bg-gray-800 rounded-lg p-1">
                         {['all', 'pending', 'assigned'].map((f) => (
                             <button
@@ -224,183 +216,183 @@ export default function BookingsPage() {
                         🔄
                     </button>
                 </div>
-            </div>
 
-            {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
-                <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-4">
-                    <p className="text-gray-400 text-xs uppercase">Total Reservas</p>
-                    <p className="text-2xl font-bold text-white">{bookings.length}</p>
-                </div>
-                <div className="bg-gray-900/50 border border-yellow-500/30 rounded-lg p-4">
-                    <p className="text-gray-400 text-xs uppercase">Pendientes</p>
-                    <p className="text-2xl font-bold text-yellow-400">
-                        {bookings.filter(b => b.status === 'pending').length}
-                    </p>
-                </div>
-                <div className="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
-                    <p className="text-gray-400 text-xs uppercase">Ingresos Hoy</p>
-                    <p className="text-2xl font-bold text-green-400">
-                        S/{bookings.reduce((sum, b) => sum + b.service_fee, 0)}
-                    </p>
-                </div>
-                <div className="bg-gray-900/50 border border-blue-500/30 rounded-lg p-4">
-                    <p className="text-gray-400 text-xs uppercase">Total Procesado</p>
-                    <p className="text-2xl font-bold text-blue-400">
-                        S/{bookings.reduce((sum, b) => sum + b.total_amount, 0)}
-                    </p>
-                </div>
-            </div>
-
-            {/* Bookings Table */}
-            <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-800/50">
-                        <tr>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Reserva</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Tour</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Turista</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Fecha</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Monto</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Estado</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Guía</th>
-                            <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-800">
-                        {bookings.map((booking) => (
-                            <tr key={booking.id} className="hover:bg-gray-800/30 transition">
-                                <td className="p-4">
-                                    <p className="font-mono text-cyan-400">{booking.id}</p>
-                                    <p className="text-xs text-gray-500">
-                                        {new Date(booking.created_at).toLocaleString()}
-                                    </p>
-                                </td>
-                                <td className="p-4">
-                                    <p className="font-medium">{booking.tour_name}</p>
-                                    <p className="text-xs text-gray-400">👥 {booking.guests_count} personas</p>
-                                    {booking.agency && (
-                                        <p className="text-xs text-blue-400">🏢 {booking.agency.name}</p>
-                                    )}
-                                </td>
-                                <td className="p-4">
-                                    <p className="font-medium">{booking.tourist.name}</p>
-                                    <p className="text-xs text-gray-400">{booking.tourist.email}</p>
-                                    <p className="text-xs text-gray-400">{booking.tourist.phone}</p>
-                                </td>
-                                <td className="p-4">
-                                    <p className="font-medium">{booking.date}</p>
-                                    <p className="text-xs text-gray-400">{booking.time}</p>
-                                </td>
-                                <td className="p-4">
-                                    <p className="font-bold text-lg">S/{booking.total_amount}</p>
-                                    <p className="text-xs text-green-400">
-                                        Comisión: S/{booking.service_fee}
-                                    </p>
-                                    <p className={`text-xs ${getPaymentColor(booking.payment_status)}`}>
-                                        {booking.payment_status === 'paid' ? '✓ Pagado' : '⏳ Pendiente'}
-                                    </p>
-                                </td>
-                                <td className="p-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(booking.status)}`}>
-                                        {booking.status === 'pending' ? '⏳ Pendiente' :
-                                            booking.status === 'assigned' ? '✓ Asignado' :
-                                                booking.status}
-                                    </span>
-                                </td>
-                                <td className="p-4">
-                                    {booking.guide ? (
-                                        <div>
-                                            <p className="font-medium text-green-400">{booking.guide.name}</p>
-                                            <p className="text-xs text-gray-400">{booking.guide.phone}</p>
-                                        </div>
-                                    ) : (
-                                        <span className="text-gray-500 italic">Sin asignar</span>
-                                    )}
-                                </td>
-                                <td className="p-4">
-                                    {!booking.guide && booking.payment_status === 'paid' && (
-                                        <button
-                                            onClick={() => {
-                                                setSelectedBooking(booking);
-                                                loadGuides(booking.agency?.id);
-                                                setShowAssignModal(true);
-                                            }}
-                                            className="px-3 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm rounded-lg transition"
-                                        >
-                                            Asignar Guía
-                                        </button>
-                                    )}
-                                    {booking.guide && (
-                                        <button
-                                            className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition"
-                                        >
-                                            Ver Detalles
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Assign Guide Modal */}
-            {showAssignModal && selectedBooking && (
-                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-lg w-full">
-                        <h3 className="text-lg font-bold text-cyan-400 mb-4">
-                            🎯 Asignar Guía
-                        </h3>
-                        <div className="bg-gray-800 rounded-lg p-4 mb-4">
-                            <p className="font-medium">{selectedBooking.tour_name}</p>
-                            <p className="text-sm text-gray-400">
-                                {selectedBooking.date} • {selectedBooking.time} • {selectedBooking.guests_count} personas
-                            </p>
-                            <p className="text-sm text-gray-400 mt-2">
-                                Turista: {selectedBooking.tourist.name}
-                            </p>
-                        </div>
-
-                        <p className="text-sm text-gray-400 mb-3">Guías Disponibles:</p>
-                        <div className="space-y-2 max-h-60 overflow-y-auto">
-                            {guides.filter(g => g.is_available).map((guide) => (
-                                <button
-                                    key={guide.id}
-                                    onClick={() => handleAssignGuide(guide.id)}
-                                    className="w-full p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition flex items-center justify-between"
-                                >
-                                    <div>
-                                        <p className="font-medium">{guide.name}</p>
-                                        <p className="text-xs text-gray-400">{guide.phone}</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-yellow-400">⭐ {guide.rating}</p>
-                                        <span className="text-xs text-green-400">Disponible</span>
-                                    </div>
-                                </button>
-                            ))}
-                            {guides.filter(g => g.is_available).length === 0 && (
-                                <p className="text-gray-500 text-center py-4">
-                                    No hay guías disponibles
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="flex gap-3 mt-6">
-                            <button
-                                onClick={() => {
-                                    setShowAssignModal(false);
-                                    setSelectedBooking(null);
-                                }}
-                                className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
+                {/* Stats Row */}
+                <div className="grid grid-cols-4 gap-4 mb-8">
+                    <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-4">
+                        <p className="text-gray-400 text-xs uppercase">Total Reservas</p>
+                        <p className="text-2xl font-bold text-white">{bookings.length}</p>
+                    </div>
+                    <div className="bg-gray-900/50 border border-yellow-500/30 rounded-lg p-4">
+                        <p className="text-gray-400 text-xs uppercase">Pendientes</p>
+                        <p className="text-2xl font-bold text-yellow-400">
+                            {bookings.filter(b => b.status === 'pending').length}
+                        </p>
+                    </div>
+                    <div className="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
+                        <p className="text-gray-400 text-xs uppercase">Ingresos Hoy</p>
+                        <p className="text-2xl font-bold text-green-400">
+                            S/{bookings.reduce((sum, b) => sum + b.service_fee, 0)}
+                        </p>
+                    </div>
+                    <div className="bg-gray-900/50 border border-blue-500/30 rounded-lg p-4">
+                        <p className="text-gray-400 text-xs uppercase">Total Procesado</p>
+                        <p className="text-2xl font-bold text-blue-400">
+                            S/{bookings.reduce((sum, b) => sum + b.total_amount, 0)}
+                        </p>
                     </div>
                 </div>
-            )}
-        </div>
+
+                {/* Bookings Table */}
+                <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
+                    <table className="w-full">
+                        <thead className="bg-gray-800/50">
+                            <tr>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Reserva</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Tour</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Turista</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Fecha</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Monto</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Estado</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Guía</th>
+                                <th className="text-left p-4 text-xs text-gray-400 uppercase font-mono">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-800">
+                            {bookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-gray-800/30 transition">
+                                    <td className="p-4">
+                                        <p className="font-mono text-cyan-400">{booking.id}</p>
+                                        <p className="text-xs text-gray-500">
+                                            {new Date(booking.created_at).toLocaleString()}
+                                        </p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="font-medium">{booking.tour_name}</p>
+                                        <p className="text-xs text-gray-400">👥 {booking.guests_count} personas</p>
+                                        {booking.agency && (
+                                            <p className="text-xs text-blue-400">🏢 {booking.agency.name}</p>
+                                        )}
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="font-medium">{booking.tourist.name}</p>
+                                        <p className="text-xs text-gray-400">{booking.tourist.email}</p>
+                                        <p className="text-xs text-gray-400">{booking.tourist.phone}</p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="font-medium">{booking.date}</p>
+                                        <p className="text-xs text-gray-400">{booking.time}</p>
+                                    </td>
+                                    <td className="p-4">
+                                        <p className="font-bold text-lg">S/{booking.total_amount}</p>
+                                        <p className="text-xs text-green-400">
+                                            Comisión: S/{booking.service_fee}
+                                        </p>
+                                        <p className={`text-xs ${getPaymentColor(booking.payment_status)}`}>
+                                            {booking.payment_status === 'paid' ? '✓ Pagado' : '⏳ Pendiente'}
+                                        </p>
+                                    </td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(booking.status)}`}>
+                                            {booking.status === 'pending' ? '⏳ Pendiente' :
+                                                booking.status === 'assigned' ? '✓ Asignado' :
+                                                    booking.status}
+                                        </span>
+                                    </td>
+                                    <td className="p-4">
+                                        {booking.guide ? (
+                                            <div>
+                                                <p className="font-medium text-green-400">{booking.guide.name}</p>
+                                                <p className="text-xs text-gray-400">{booking.guide.phone}</p>
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-500 italic">Sin asignar</span>
+                                        )}
+                                    </td>
+                                    <td className="p-4">
+                                        {!booking.guide && booking.payment_status === 'paid' && (
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedBooking(booking);
+                                                    loadGuides(booking.agency?.id);
+                                                    setShowAssignModal(true);
+                                                }}
+                                                className="px-3 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm rounded-lg transition"
+                                            >
+                                                Asignar Guía
+                                            </button>
+                                        )}
+                                        {booking.guide && (
+                                            <button
+                                                className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition"
+                                            >
+                                                Ver Detalles
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Assign Guide Modal */}
+                {showAssignModal && selectedBooking && (
+                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-lg w-full">
+                            <h3 className="text-lg font-bold text-cyan-400 mb-4">
+                                🎯 Asignar Guía
+                            </h3>
+                            <div className="bg-gray-800 rounded-lg p-4 mb-4">
+                                <p className="font-medium">{selectedBooking.tour_name}</p>
+                                <p className="text-sm text-gray-400">
+                                    {selectedBooking.date} • {selectedBooking.time} • {selectedBooking.guests_count} personas
+                                </p>
+                                <p className="text-sm text-gray-400 mt-2">
+                                    Turista: {selectedBooking.tourist.name}
+                                </p>
+                            </div>
+
+                            <p className="text-sm text-gray-400 mb-3">Guías Disponibles:</p>
+                            <div className="space-y-2 max-h-60 overflow-y-auto">
+                                {guides.filter(g => g.is_available).map((guide) => (
+                                    <button
+                                        key={guide.id}
+                                        onClick={() => handleAssignGuide(guide.id)}
+                                        className="w-full p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left transition flex items-center justify-between"
+                                    >
+                                        <div>
+                                            <p className="font-medium">{guide.name}</p>
+                                            <p className="text-xs text-gray-400">{guide.phone}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-yellow-400">⭐ {guide.rating}</p>
+                                            <span className="text-xs text-green-400">Disponible</span>
+                                        </div>
+                                    </button>
+                                ))}
+                                {guides.filter(g => g.is_available).length === 0 && (
+                                    <p className="text-gray-500 text-center py-4">
+                                        No hay guías disponibles
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    onClick={() => {
+                                        setShowAssignModal(false);
+                                        setSelectedBooking(null);
+                                    }}
+                                    className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </DashboardLayout>
     );
 }

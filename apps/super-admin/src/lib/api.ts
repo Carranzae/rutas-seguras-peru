@@ -3,7 +3,11 @@
  */
 
 // Backend API URL
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+if (!baseUrl.includes('localhost') && baseUrl.startsWith('http://')) {
+    baseUrl = baseUrl.replace('http://', 'https://');
+}
+export const API_BASE_URL = baseUrl;
 export const API_VERSION = '/api/v1';
 
 // Full API URL helper
